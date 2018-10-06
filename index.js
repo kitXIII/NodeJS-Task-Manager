@@ -8,30 +8,28 @@ import Koa from 'koa';
 import serve from 'koa-static';
 import mount from 'koa-mount';
 import Pug from 'koa-pug';
+import Rollbar from 'rollbar';
 import container from './container';
 
 export default () => {
   const app = new Koa();
-  const log = container.logger;
+  const rollbar = new Rollbar({
+    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+  });
 
-  app.use(mount('/assets', serve(path.join(__dirname, 'dist'))));
+  const log = container.logger;
 
   app.use(async (ctx, next) => {
     try {
       await next();
     } catch (err) {
-      // will only respond with JSON
-      ctx.status = err.statusCode || err.status || 500;
-      ctx.body = {
-        message: err.message,
-      };
-      if (ctx.status === 404) {
-        ctx.render('404');
-      }
-      ctx.render('500');
+      rollbar.error(err, ctx.request);
     }
   });
 
+  app.use(mount('/assets', serve(path.join(__dirname, 'dist'))));
   // x-response-time
   app.use(async (ctx, next) => {
     const start = new Date();
@@ -51,7 +49,7 @@ export default () => {
   // response
   app.use((ctx) => {
     ctx.body = 'Hello World';
-    throw new Error('Oi blya-a-a');
+    throw new Error('a-a-a');
   });
 
   const pug = new Pug({

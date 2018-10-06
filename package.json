@@ -74,6 +74,7 @@
     "popper.js": "^1.14.4",
     "postcss-loader": "^3.0.0",
     "pug": "^2.0.3",
+    "rollbar": "^2.4.7",
     "sass-loader": "^7.1.0",
     "sequelize": "^4.39.0",
     "sequelize-cli": "^4.1.1",
