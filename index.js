@@ -24,6 +24,7 @@ export default () => {
   app.use(async (ctx, next) => {
     try {
       await next();
+      rollbar.log('Run app');
     } catch (err) {
       rollbar.error(err, ctx.request);
     }
