@@ -1,5 +1,7 @@
+/* eslint-env browser */
+
 export default () => {
-  window.addEventListener('DOMContentLoaded', () => {
+  Window.addEventListener('DOMContentLoaded', () => {
     console.log('It, works!');
   });
 };

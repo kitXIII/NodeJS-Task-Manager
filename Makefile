@@ -5,7 +5,7 @@ db-setup:
 	npm run sequelize db:migrate
 
 setup: install db-setup
-	npm run flow-typed install -- -s
+	npm run flow-typed install
 
 run:
 	DEBUG="application:*" npm run nodemon -- --watch .  --ext '.js' --exec npm run gulp -- server
@@ -16,7 +16,7 @@ start:
 console:
 	npm run gulp -- console
 
-build: debug
+build:
 	npm run build
 
 lint:
