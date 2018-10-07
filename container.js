@@ -1,7 +1,10 @@
 import dotenv from 'dotenv';
-
-import logger from './lib/logger';
+import getLogger from './lib/logger';
+import secure from './lib/secure';
 
 dotenv.config();
 
-export default { logger };
+const env = process.env.NODE_ENV || 'development';
+const logger = getLogger(env);
+
+export default { logger, secure };

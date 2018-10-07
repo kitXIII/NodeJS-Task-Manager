@@ -7,5 +7,5 @@ flow-typed
 public/assets
 .bash_history
 /.vscode/
-*.example*git
+*.example*
 .env

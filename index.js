@@ -8,25 +8,22 @@ import Koa from 'koa';
 import serve from 'koa-static';
 import mount from 'koa-mount';
 import Pug from 'koa-pug';
-import Rollbar from 'rollbar';
+
 import container from './container';
+
 
 export default () => {
   const app = new Koa();
-  const rollbar = new Rollbar({
-    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-  });
+  const { logger } = container;
 
-  const log = container.logger;
+  logger.info('Application init');
 
   app.use(async (ctx, next) => {
     try {
       await next();
-      rollbar.log('Run app');
     } catch (err) {
-      rollbar.error(err, ctx.request);
+      logger.error(err, ctx.request);
+      ctx.render('500');
     }
   });
 
@@ -36,7 +33,7 @@ export default () => {
     const start = new Date();
     await next();
     const ms = new Date() - start;
-    log(`1: ${ctx.method} ${ctx.url} - ${ms}`);
+    logger.info(`1: ${ctx.method} ${ctx.url} - ${ms}`);
   });
 
   // logger
@@ -44,13 +41,13 @@ export default () => {
     const start = new Date();
     await next();
     const ms = new Date() - start;
-    log(`2: ${ctx.method} ${ctx.url} - ${ms}`);
+    logger.info(`2: ${ctx.method} ${ctx.url} - ${ms}`);
   });
 
   // response
   app.use((ctx) => {
     ctx.body = 'Hello World';
-    throw new Error('a-a-a');
+    // throw new Error('a-a-a');
   });
 
   const pug = new Pug({
