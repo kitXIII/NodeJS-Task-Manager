@@ -11,12 +11,11 @@ import Pug from 'koa-pug';
 
 import container from './container';
 
-
 export default () => {
   const app = new Koa();
   const { logger } = container;
 
-  logger.info('Application init');
+  logger.info('Application start');
 
   app.use(async (ctx, next) => {
     try {
@@ -28,27 +27,6 @@ export default () => {
   });
 
   app.use(mount('/assets', serve(path.join(__dirname, 'dist'))));
-  // x-response-time
-  app.use(async (ctx, next) => {
-    const start = new Date();
-    await next();
-    const ms = new Date() - start;
-    logger.info(`1: ${ctx.method} ${ctx.url} - ${ms}`);
-  });
-
-  // logger
-  app.use(async (ctx, next) => {
-    const start = new Date();
-    await next();
-    const ms = new Date() - start;
-    logger.info(`2: ${ctx.method} ${ctx.url} - ${ms}`);
-  });
-
-  // response
-  app.use((ctx) => {
-    ctx.body = 'Hello World';
-    // throw new Error('a-a-a');
-  });
 
   const pug = new Pug({
     viewPath: path.join(__dirname, 'views'),
