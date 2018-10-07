@@ -17,8 +17,8 @@ import addRoutes from './routes';
 export default () => {
   const app = new Koa();
   const { logger } = container;
-
-  logger.info('Application start');
+  const date = new Date();
+  logger.info(`Application start at ${date.toString()}`);
 
   app.use(async (ctx, next) => {
     try {

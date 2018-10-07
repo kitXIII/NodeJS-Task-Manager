@@ -16,9 +16,6 @@ start:
 console:
 	npm run gulp -- console
 
-install:
-	npm install		
-
 build: debug
 	npm run build
 
