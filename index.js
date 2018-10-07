@@ -10,6 +10,8 @@ import mount from 'koa-mount';
 import Pug from 'koa-pug';
 import koaLogger from 'koa-logger';
 import Router from 'koa-router';
+import bodyParser from 'koa-bodyparser';
+import methodOverride from 'koa-methodoverride';
 
 import container from './container';
 import addRoutes from './routes';
@@ -38,7 +40,14 @@ export default () => {
       }
     }
   });
-
+  app.use(bodyParser());
+  app.use(methodOverride((req) => {
+    // return req?.body?._method;
+    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+      return req.body._method; // eslint-disable-line
+    }
+    return null;
+  }));
   app.use(mount('/assets', serve(path.join(__dirname, 'dist'))));
   app.use(koaLogger());
 
