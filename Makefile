@@ -13,6 +13,9 @@ run:
 start:
 	npm run start
 
+production:
+	NODE_ENV=production npm run start
+
 console:
 	npm run gulp -- console
 
