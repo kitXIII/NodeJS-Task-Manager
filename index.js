@@ -8,6 +8,7 @@ import Koa from 'koa';
 import serve from 'koa-static';
 import mount from 'koa-mount';
 import Pug from 'koa-pug';
+import koaLogger from 'koa-logger';
 
 import container from './container';
 
@@ -20,13 +21,24 @@ export default () => {
   app.use(async (ctx, next) => {
     try {
       await next();
+      const status = ctx.status || 404;
+      if (status === 404) {
+        ctx.throw(404, `Page not found on ${ctx.method} ${ctx.url}`);
+      }
     } catch (err) {
-      logger.error(err, ctx.request);
-      ctx.render('500');
+      ctx.status = err.status || 500;
+      if (ctx.status === 404) {
+        await ctx.render('404');
+        logger.warning(err.message);
+      } else {
+        await ctx.render('500');
+        logger.error(err, ctx.request);
+      }
     }
   });
 
   app.use(mount('/assets', serve(path.join(__dirname, 'dist'))));
+  app.use(koaLogger());
 
   const pug = new Pug({
     viewPath: path.join(__dirname, 'views'),
