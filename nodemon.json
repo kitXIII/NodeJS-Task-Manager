@@ -1,5 +1,4 @@
 {
   "verbose": true,
-  "ignore": ["dist", "node_modules", "flow-typed"],
-  "delay": "5000"
+  "ignore": ["dist", "node_modules", "flow-typed"]
 }

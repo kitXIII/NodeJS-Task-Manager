@@ -1,6 +1,6 @@
 // @flow
 
-// import '@babel/polyfill';
+import '@babel/polyfill';
 
 import path from 'path';
 import _ from 'lodash';
@@ -14,6 +14,8 @@ import bodyParser from 'koa-bodyparser';
 import methodOverride from 'koa-methodoverride';
 import session from 'koa-generic-session';
 import flash from 'koa-flash-simple';
+import favicon from 'koa-favicon';
+import Rollbar from 'rollbar';
 
 import container from './container';
 import addRoutes from './routes';
@@ -21,8 +23,14 @@ import addRoutes from './routes';
 export default () => {
   const app = new Koa();
   const { logger } = container;
+  const rollbar = new Rollbar({
+    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+  });
+
   const date = new Date();
-  logger.info(`Application start at ${date.toString()}`);
+  logger(`Application start at ${date.toString()}`);
 
   app.use(async (ctx, next) => {
     try {
@@ -35,15 +43,16 @@ export default () => {
       ctx.status = err.status || 500;
       if (ctx.status === 404) {
         await ctx.render('404');
-        logger.warning(err.message);
+        logger(err.message);
       } else {
         await ctx.render('500');
-        logger.error(err, ctx.request);
+        logger(err);
+        rollbar.error(err, ctx.request);
       }
     }
   });
 
-  app.keys = ['im a newer secret', 'i like turtle'];
+  app.keys = [process.env.SESSION_SECRET];
   app.use(session(app));
   app.use(flash());
   app.use(async (ctx, next) => {
@@ -61,6 +70,7 @@ export default () => {
     }
     return null;
   }));
+  app.use(favicon());
   app.use(mount('/assets', serve(path.join(__dirname, 'dist'))));
   app.use(koaLogger());
 
@@ -71,7 +81,7 @@ export default () => {
 
   const pug = new Pug({
     viewPath: path.join(__dirname, 'views'),
-    noCache: process.env.NODE_ENV === 'development',
+    noCache: container.env === 'development',
     debug: true,
     pretty: true,
     compileDebug: true,
