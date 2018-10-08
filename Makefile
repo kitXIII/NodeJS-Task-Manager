@@ -13,6 +13,10 @@ run:
 start:
 	npm run start
 
+heroku-start:
+	npm run sequelize db:migrate
+	npm run start
+
 console:
 	npm run gulp -- console
 
