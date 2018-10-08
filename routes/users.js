@@ -1,5 +1,7 @@
 import buildFormObj from '../lib/formObjectBuilder';
-import { User } from '../models';
+import db from '../models';
+
+const { User } = db;
 
 export default (router, { logger }) => {
   router

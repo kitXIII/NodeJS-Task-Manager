@@ -13,3 +13,6 @@
 
 `make setup`
 
+## Heroku app
+
+[Live demo](https://kit-tasks.herokuapp.com)

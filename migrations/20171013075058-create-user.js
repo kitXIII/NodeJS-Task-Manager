@@ -1,4 +1,4 @@
-
+/* eslint no-unused-vars: "error" */
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
     id: {
