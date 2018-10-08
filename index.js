@@ -12,6 +12,8 @@ import koaLogger from 'koa-logger';
 import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser';
 import methodOverride from 'koa-methodoverride';
+import session from 'koa-generic-session';
+import flash from 'koa-flash-simple';
 
 import container from './container';
 import addRoutes from './routes';
@@ -39,6 +41,17 @@ export default () => {
         logger.error(err, ctx.request);
       }
     }
+  });
+
+  app.keys = ['im a newer secret', 'i like turtle'];
+  app.use(session(app));
+  app.use(flash());
+  app.use(async (ctx, next) => {
+    ctx.state = {
+      flash: ctx.flash,
+      isSignedIn: () => ctx.session.userId !== undefined,
+    };
+    await next();
   });
   app.use(bodyParser());
   app.use(methodOverride((req) => {

@@ -1,7 +1,5 @@
 import buildFormObj from '../lib/formObjectBuilder';
-import models from '../models';
-
-const { User } = models;
+import { User } from '../models';
 
 export default (router) => {
   router
@@ -13,7 +11,7 @@ export default (router) => {
       const user = User.build();
       ctx.render('users/new', { f: buildFormObj(user) });
     })
-    .post('users', '/users', async (ctx) => {
+    .post('sendUser', '/users', async (ctx) => {
       const { form } = ctx.request.body;
       const user = User.build(form);
       try {

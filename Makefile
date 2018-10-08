@@ -8,7 +8,7 @@ setup: install db-setup
 	npm run flow-typed install
 
 run:
-	DEBUG="application:*" npm run nodemon -- --watch .  --ext '.js' --exec npm run gulp -- server
+	DEBUG="application:*" npm run nodemon -- --watch . --ext '.js' --exec npm run gulp -- server
 
 start:
 	npm run start

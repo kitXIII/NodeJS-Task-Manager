@@ -1,8 +1,6 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import { encrypt } from '../lib/secure';
-import models from '../models';
-
-const { User } = models;
+import { User } from '../models';
 
 export default (router) => {
   router
