@@ -1,5 +1,5 @@
 export default () => {
-  Window.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('DOMContentLoaded', () => {
     console.log('It, works!');
   });
 };
