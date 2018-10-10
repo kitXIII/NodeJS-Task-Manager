@@ -20,5 +20,5 @@ gulp.task('console', () => {
 gulp.task('server', (cb) => {
   const port = process.env.PORT || 3000;
   getServer().listen(port, cb);
-  console.log(`Server listen on ${port}`);
+  container.logger(`Server listen on ${port}`);
 });
