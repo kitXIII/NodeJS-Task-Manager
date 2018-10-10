@@ -1,10 +1,11 @@
 - const getInputName = (f, property) => `${f.name}[${property}]`
 
-mixin formFor(f, options = {})
+mixin formFor(f, options = { inline: false })
   - const url = _.get(options, 'url');
   - const method = _.get(options, 'method', 'get').toLowerCase();
   - const isStandart = _.includes(['get', 'post'], method);
-  form(action= url method= isStandart ? method : 'post')
+  - const isInline = _.get(options, 'inline');
+  form(action= url method= isStandart ? method : 'post' class= isInline ?  'form-inline' : '')
     if !isStandart
       input(name='_method' type='hidden' value= method)
     block
@@ -17,6 +18,6 @@ mixin input(f, property, options = { as: 'text' })
     if f.errors[property]
       .form-control-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
-mixin button(f, type = 'submit')
+mixin button(f, value = 'Save', view = 'primary', type = 'submit')
   .form-group
-    input(class='btn' type=`${type}` value=`Save`)
+    input(class=`btn btn-${view}` type=`${type}` value=`${value}`)
