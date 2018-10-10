@@ -32,7 +32,9 @@ html(lang="en")
     main.container(role="main")
       - const msg = flash.get()
       if msg
-        .alert.alert-info.m-3= msg
+        .alert.alert-info.alert-dismissible.fade.show.m-3= msg
+          button.close(type="button", data-dismiss="alert")
+            span(aria-hidden="true") &times;
       block content
     footer.footer
       .container
