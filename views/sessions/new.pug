@@ -4,4 +4,4 @@ block content
   +formFor(f, { url: urlFor('session'), method: 'post' })
     +input(f, 'email')
     +input(f, 'password', { as: 'password' })
-    +button(f, 'Sign In', 'info')
+    +button(f, { value: 'Sign In', classList: ['btn-info'] })

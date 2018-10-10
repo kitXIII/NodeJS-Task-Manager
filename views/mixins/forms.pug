@@ -18,6 +18,9 @@ mixin input(f, property, options = { as: 'text' })
     if f.errors[property]
       .form-control-feedback= f.errors[property].map(({ message }) => message).join('. ')
 
-mixin button(f, value = 'Save', view = 'primary', type = 'submit')
+mixin button(f, options = {})
+  - const value = _.get(options, 'value', 'Save');
+  - const type = _.get(options, 'type', 'submit');
+  - const classList = _.get(options, 'classList', '');
   .form-group
-    input(class=`btn btn-${view}` type=`${type}` value=`${value}`)
+    input(class=`btn ${(classList instanceof Array) ? classList.join(' ') : classList}` type=`${type}` value=`${value}`)

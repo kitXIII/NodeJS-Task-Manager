@@ -3,10 +3,6 @@ import path from 'path';
 import Sequelize from 'sequelize';
 import confFromFile from '../config/config.json';
 
-// const fs = require('fs');
-// const path = require('path');
-// const Sequelize = require('sequelize');
-
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = confFromFile[env];
