@@ -26,7 +26,7 @@ export default (router, { logger }) => {
         return;
       }
       logger(`Email: ${email} or password were wrong`);
-      ctx.flash.set('Email or password were wrong');
+      ctx.flash.set({ message: 'Email or password were wrong', type: 'warning' });
       // ctx.render('sessions/new', { f: buildFormObj({ email }) });
       ctx.redirect(router.url('newSession'));
     })

@@ -24,7 +24,7 @@ export default (router, { logger }) => {
         logger('Users: try to create new user (save to database)');
         await user.save();
         logger('New user has been created');
-        ctx.flash.set('User has been created');
+        ctx.flash.set({ message: 'User has been created', type: 'success' });
         ctx.redirect(router.url('root'));
       } catch (e) {
         ctx.render('users/new', { f: buildFormObj(user, e) });
