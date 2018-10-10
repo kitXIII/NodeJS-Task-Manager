@@ -20,7 +20,7 @@
     "start": "gulp server",
     "eslint": "eslint",
     "webpack": "webpack",
-    "build": "npm run webpack -- -p --env production",
+    "build": "npm run webpack -- -p --env production --progress",
     "postinstall": "npm run build"
   },
   "repository": {

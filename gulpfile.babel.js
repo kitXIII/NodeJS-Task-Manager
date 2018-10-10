@@ -5,7 +5,7 @@ import repl from 'repl';
 import getServer from '.';
 import container from './container';
 
-gulp.task('default', console.log('Gulp works!'));
+// gulp.task('default', console.log('Gulp works!'));
 
 gulp.task('console', () => {
   const replServer = repl.start({
