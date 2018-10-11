@@ -1,4 +1,5 @@
 include /mixins/forms.pug
+include /mixins/flash.pug
 
 doctype html
 html(lang="en")
@@ -30,13 +31,9 @@ html(lang="en")
             li.nav-item
               a.nav-link.btn(href=urlFor('newUser')) Sign Up
     main.container(role="main")
-      - const flashData = flash.get()
-      if flashData
-        - const message = flashData.message || 'INFO'
-        - const type = flashData.type || 'info'
-        .alert.alert-dismissible.fade.show.m-3(class=`alert-${type}`)= message
-          button.close(type="button", data-dismiss="alert")
-            span(aria-hidden="true") &times;
+      - const flashOptions = flash.get()
+      if flashOptions
+        +flash(f, flashOptions)        
       block content
     footer.footer
       .container
