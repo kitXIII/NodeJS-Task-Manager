@@ -18,8 +18,10 @@ html(lang="en")
         span.navbar-toggler-icon
       .collapse.navbar-collapse#navbarCollapse
         ul.navbar-nav.mr-auto
-          li.nav-item.active
-            a.nav-link(href=urlFor('users')) Users
+          li.nav-item
+            a.nav-link.transition(href=urlFor('users')) 
+              i.fas.fa-user-friends.mr-1
+              | Users
         ul.navbar-nav.navbar-sign-block
           if isSignedIn()
             li.nav-item
@@ -27,9 +29,9 @@ html(lang="en")
                 +button(f, { value: 'Sign Out', classList: 'btn-link nav-link' })
           else
             li.nav-item
-              a.nav-link.btn(href=urlFor('newSession')) Sign In
+              a.nav-link.btn.navbar-btn(href=urlFor('newSession')) Sign In
             li.nav-item
-              a.nav-link.btn(href=urlFor('newUser')) Sign Up
+              a.nav-link.btn.navbar-btn(href=urlFor('newUser')) Sign Up
     main.container(role="main")
       - const flashOptions = flash.get()
       if flashOptions
@@ -38,4 +40,4 @@ html(lang="en")
     footer.footer
       .container
         span.text-muted For more information, visit the 
-            a(href="https://ru.hexlet.io/professions/backend#projects") Hexlet website
+          a(href="https://ru.hexlet.io/professions/backend#projects") Hexlet website

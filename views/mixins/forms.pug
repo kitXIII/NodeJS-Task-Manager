@@ -22,5 +22,8 @@ mixin button(f, options = {})
   - const value = _.get(options, 'value', 'Save');
   - const type = _.get(options, 'type', 'submit');
   - const classList = _.get(options, 'classList', '');
+  - const child = _.get(options, 'child');
   .form-group
     input(class=`btn ${(classList instanceof Array) ? classList.join(' ') : classList}` type=`${type}` value=`${value}`)
+    if (child)
+      child
