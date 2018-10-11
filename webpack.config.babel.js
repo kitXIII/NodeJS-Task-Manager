@@ -27,6 +27,17 @@ export default {
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'fonts/',
+            publicPath: '../fonts/',
+          },
+        },
+      },
+      {
         test: /\.(sa|sc)ss$/,
         use: [
           MiniCssExtractPlugin.loader,
