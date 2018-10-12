@@ -30,7 +30,7 @@ export default () => {
   });
 
   const date = new Date();
-  logger(`Application start at ${date.toString()}`);
+  rollbar.info(`Application start at ${date.toString()}`);
 
   app.use(async (ctx, next) => {
     try {
