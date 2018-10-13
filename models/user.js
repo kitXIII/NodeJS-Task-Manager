@@ -1,4 +1,5 @@
 import encrypt from '../lib/secure';
+import formatDate from '../lib/formatDate';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -32,6 +33,9 @@ export default (sequelize, DataTypes) => {
     getterMethods: {
       fullName() {
         return `${this.firstName} ${this.lastName}`;
+      },
+      created() {
+        return formatDate(this.createdAt);
       },
       // associate(models) {
       //   // associations can be defined here

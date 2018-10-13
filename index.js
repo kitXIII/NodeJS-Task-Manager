@@ -91,7 +91,9 @@ export default () => {
     debug: true,
     pretty: true,
     compileDebug: true,
-    locals: [], // global_locals_for_all_pages
+    locals: {
+      Title: 'Tasks \uf0ae',
+    },
     basedir: path.join(__dirname, 'views'),
     helperPath: [
       { _ },
