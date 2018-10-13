@@ -61,9 +61,11 @@ export default () => {
     ctx.state = {
       flash: ctx.flash,
       isSignedIn: () => ctx.session.userId !== undefined,
+      userName: ctx.session.userName,
     };
     logger(`Flash: ${ctx.state.flash.get()}`);
     logger(`Is session set: ${ctx.state.isSignedIn()}`);
+    logger(`Username: ${ctx.state.userName}`);
     await next();
   });
   app.use(bodyParser());

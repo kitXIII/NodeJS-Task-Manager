@@ -22,6 +22,8 @@ export default (router, { logger }) => {
       if (user && user.passwordDigest === encrypt(password)) {
         logger(`User with email ${email} logged in`);
         ctx.session.userId = user.id;
+        ctx.session.userName = user.firstName;
+        ctx.flash.set({ message: `Hello, ${user.firstName}`, type: 'info' });
         ctx.redirect(router.url('root'));
         return;
       }
