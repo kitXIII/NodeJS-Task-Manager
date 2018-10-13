@@ -22,14 +22,14 @@ export default (sequelize, DataTypes) => {
       set(value) {
         this.setDataValue('passwordDigest', encrypt(value));
         this.setDataValue('password', value);
-        return value;
+        // return value;
       },
       validate: {
         len: [1, +Infinity],
       },
     },
   }, {
-    classMethods: {
+    getterMethods: {
       fullName() {
         return `${this.firstName} ${this.lastName}`;
       },
