@@ -29,6 +29,9 @@ lint:
 test:
 	npm test
 
+test-debug:
+	DEBUG="application:*" npm test
+
 check-types:
 	npm run flow
 

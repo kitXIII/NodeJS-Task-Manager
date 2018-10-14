@@ -21,7 +21,7 @@ export default (router, { logger }) => {
       logger('Users: got new user data');
       const user = User.build(form);
       try {
-        logger('Users: try to create new user (save to database)');
+        logger(`Users: try to create (save to database) new user: ${user.fullName} ${user.email}`);
         await user.save();
         logger('New user has been created');
         ctx.flash.set({ message: 'User has been created', type: 'success' });
