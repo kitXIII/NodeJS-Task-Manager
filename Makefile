@@ -4,6 +4,9 @@ install:
 db-setup:
 	npm run sequelize db:migrate
 
+db-flush:
+	npm run sequelize db:migrate:undo:all
+
 setup: install db-setup
 	npm run flow-typed install
 

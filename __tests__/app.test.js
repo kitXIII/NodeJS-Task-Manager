@@ -18,9 +18,8 @@ beforeAll(async () => {
   await sequelize.sync({ force: 'true' });
 });
 
-let server;
-
 describe('Main requests', () => {
+  let server;
   beforeAll(() => {
     jasmine.addMatchers(matchers);
     server = app().listen();
@@ -45,6 +44,7 @@ describe('Main requests', () => {
 });
 
 describe('Users', () => {
+  let server;
   const user = getFakeUser();
 
   beforeAll(() => {
@@ -82,14 +82,6 @@ describe('Users', () => {
     expect(getRes).toHaveHTTPStatus(200);
   });
 
-  // it('POST /users (errors)', async () => {
-  //   const errorsRes = await request.agent(server)
-  //     .post('/users');
-  //   expect(errorsRes).toHaveHTTPStatus(302);
-  //   const url = errorsRes.headers.location;
-  //   expect(url).not.toBe('/');
-  // });
-
   afterAll((done) => {
     server.close();
     done();
@@ -97,6 +89,7 @@ describe('Users', () => {
 });
 
 describe('Sessions', async () => {
+  let server;
   const user = getFakeUser();
   beforeAll(() => {
     jasmine.addMatchers(matchers);

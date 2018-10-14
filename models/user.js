@@ -3,10 +3,20 @@ import formatDate from '../lib/formatDate';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    firstName: DataTypes.STRING,
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        is: {
+          args: /^[a-zA-Z]{3,}$/,
+          msg: 'This field must contain at least 3 characters',
+        },
+      },
+    },
     lastName: DataTypes.STRING,
     email: {
       type: DataTypes.STRING,
+      allowNull: false,
       unique: true,
       validate: {
         isEmail: {
@@ -16,6 +26,7 @@ export default (sequelize, DataTypes) => {
     },
     passwordDigest: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
         notEmpty: true,
       },
@@ -28,7 +39,10 @@ export default (sequelize, DataTypes) => {
         // return value;
       },
       validate: {
-        len: [1, +Infinity],
+        is: {
+          args: /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,64}$/,
+          msg: 'The password length should be between 8 and 64 characters, contain digit, lower case and upper case',
+        },
       },
     },
   }, {
