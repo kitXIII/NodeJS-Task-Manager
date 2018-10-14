@@ -1,0 +1,14 @@
+extends ../layouts/application.pug
+
+block content
+  table.table.table-stripped
+    tbody
+      tr
+        td First name
+        td= user.firstName
+      tr
+        td Last name
+        td= user.lastName
+      tr
+        td email
+        td= user.email

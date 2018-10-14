@@ -9,7 +9,9 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true,
       validate: {
-        isEmail: true,
+        isEmail: {
+          msg: 'Email is not valid',
+        },
       },
     },
     passwordDigest: {

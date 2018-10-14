@@ -26,7 +26,9 @@ html(lang="en")
         ul.navbar-nav.align-items-md-center.flex-md-row
           if isSignedIn()
             li.nav-item
-              .nav-link.username= userName
+              a.nav-link.transition(href=urlFor('user', userId)) 
+                i.fas.fa-user.mr-1
+                span= userName
             li.nav-item
               +formFor(f, { url: urlFor('session'), method: 'DELETE', inline: true })
                 +button(f, { value: 'Sign Out', classList: 'btn-link nav-link' })

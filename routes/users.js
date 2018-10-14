@@ -29,5 +29,17 @@ export default (router, { logger }) => {
       } catch (e) {
         ctx.render('users/new', { f: buildFormObj(user, e) });
       }
+    })
+    .get('user', '/users/:id', async (ctx) => {
+      const { id } = ctx.params;
+      const user = await User.findOne({
+        where: {
+          id,
+        },
+      });
+      if (!user) {
+        ctx.throw(404, `User with userId: ${id} not found`);
+      }
+      ctx.render('users/user', { user });
     });
 };
