@@ -11,20 +11,18 @@ const getFakeUser = () => ({
   firstName: faker.name.firstName(),
   lastName: faker.name.lastName(),
   email: faker.internet.email(),
-  password: faker.internet.password(),
+  password: '11qwertY',
 });
+
+let server;
 
 beforeAll(async () => {
   await sequelize.sync({ force: 'true' });
+  server = app().listen();
+  jasmine.addMatchers(matchers);
 });
 
 describe('Main requests', () => {
-  let server;
-  beforeAll(() => {
-    jasmine.addMatchers(matchers);
-    server = app().listen();
-  });
-
   it('GET /', async () => {
     const res = await request.agent(server)
       .get('/');
@@ -36,21 +34,10 @@ describe('Main requests', () => {
       .get('/wrong-path');
     expect(res).toHaveHTTPStatus(404);
   });
-
-  afterAll((done) => {
-    server.close();
-    done();
-  });
 });
 
 describe('Users', () => {
-  let server;
   const user = getFakeUser();
-
-  beforeAll(() => {
-    jasmine.addMatchers(matchers);
-    server = app().listen();
-  });
 
   it('GET /users', async () => {
     const res = await request.agent(server)
@@ -71,6 +58,7 @@ describe('Users', () => {
     expect(postRes).toHaveHTTPStatus(302);
     const url = postRes.headers.location;
     expect(url).toBe('/');
+
     const userFromDB = await User.findOne({
       where: {
         email: user.email,
@@ -81,52 +69,57 @@ describe('Users', () => {
       .get(`/users/${userFromDB.id}`);
     expect(getRes).toHaveHTTPStatus(200);
   });
-
-  afterAll((done) => {
-    server.close();
-    done();
-  });
 });
 
 describe('Sessions', async () => {
-  let server;
   const user = getFakeUser();
-  beforeAll(() => {
-    jasmine.addMatchers(matchers);
-    server = app().listen();
-  });
 
-  it('GET /session/new', async () => {
+  it('GET /sessions/new', async () => {
     const res = await request.agent(server)
-      .get('/session/new');
+      .get('/sessions/new');
     expect(res).toHaveHTTPStatus(200);
   });
 
-  it('POST /session && POST /session with _method: DELETE', async () => {
+  it('POST /sessions && POST /sessions with _method: DELETE', async () => {
     const postUserRes = await request.agent(server)
       .post('/users')
       .send({ form: user });
     expect(postUserRes).toHaveHTTPStatus(302);
+
     const url1 = postUserRes.headers.location;
     expect(url1).toBe('/');
+
     const { email, password } = user;
     const postSessionRes = await request.agent(server)
-      .post('/session')
+      .post('/sessions')
       .send({ form: { email, password } });
     expect(postSessionRes).toHaveHTTPStatus(302);
+
     const url2 = postSessionRes.headers.location;
     expect(url2).toBe('/');
+
     const delSessionRes = await request.agent(server)
-      .post('/session')
+      .post('/sessions')
       .send({ _method: 'DELETE' });
-      // .delete('/session');
+      // .delete('/sessions');
     expect(delSessionRes).toHaveHTTPStatus(302);
+
     const url3 = delSessionRes.headers.location;
     expect(url3).toBe('/');
   });
 
-  afterAll((done) => {
-    server.close();
-    done();
+  it('POST /sessions (errors)', async () => {
+    const res = await request.agent(server)
+      .post('/sessions')
+      .type('form')
+      .send({ form: { email: 'impossible@user.mail', password: '1qwertY1' } });
+    expect(res).toHaveHTTPStatus(422);
+    // const url = res.headers.location;
+    // expect(url).toBe('/sessions/new');
   });
+});
+
+afterAll((done) => {
+  server.close();
+  done();
 });

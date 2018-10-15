@@ -32,6 +32,9 @@ lint:
 test:
 	npm test
 
+watch:
+	npm run test-watch
+
 test-debug:
 	DEBUG="application:*" npm test
 

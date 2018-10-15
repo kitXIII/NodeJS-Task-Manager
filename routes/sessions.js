@@ -6,12 +6,12 @@ const { User } = db;
 
 export default (router, { logger }) => {
   router
-    .get('newSession', '/session/new', async (ctx) => {
+    .get('newSession', '/sessions/new', async (ctx) => {
       logger('Sessions: prepare login form');
       const data = {};
       ctx.render('sessions/new', { f: buildFormObj(data) });
     })
-    .post('session', '/session', async (ctx) => {
+    .post('session', '/sessions', async (ctx) => {
       const { email, password } = ctx.request.body.form;
       logger(`Try to fing user with email ${email} in databse`);
       const user = await User.findOne({
@@ -28,11 +28,12 @@ export default (router, { logger }) => {
         return;
       }
       logger(`Email: ${email} or password were wrong`);
-      ctx.flash.set({ message: 'Email or password were wrong', type: 'warning' });
-      // ctx.render('sessions/new', { f: buildFormObj({ email }) });
-      ctx.redirect(router.url('newSession'));
+      ctx.state.flash = { get: () => ({ message: 'Email or password were wrong', type: 'warning' }) };
+      ctx.status = 422;
+      ctx.render('sessions/new', { f: buildFormObj({ email }) });
+      // ctx.redirect(router.url('newSession'));
     })
-    .delete('session', '/session', (ctx) => {
+    .delete('session', '/sessions', (ctx) => {
       ctx.session = {};
       ctx.redirect(router.url('root'));
     });

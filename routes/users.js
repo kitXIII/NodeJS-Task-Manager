@@ -19,7 +19,9 @@ export default (router, { logger }) => {
     .post('users', '/users', async (ctx) => {
       const { form } = ctx.request.body;
       logger('Users: got new user data');
+      console.log(form);
       const user = User.build(form);
+      console.log(user);
       try {
         logger(`Users: try to create (save to database) new user: ${user.fullName} ${user.email}`);
         await user.save();
