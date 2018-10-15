@@ -12,6 +12,7 @@ const getFakeUser = () => ({
   lastName: faker.name.lastName(),
   email: faker.internet.email(),
   password: '11qwertY',
+  confirmPassword: '11qwertY',
 });
 
 let server;
@@ -38,6 +39,7 @@ describe('Main requests', () => {
 
 describe('Users', () => {
   const user = getFakeUser();
+  const user2 = getFakeUser();
 
   it('GET /users', async () => {
     const res = await request.agent(server)
@@ -68,6 +70,38 @@ describe('Users', () => {
     const getRes = await request.agent(server)
       .get(`/users/${userFromDB.id}`);
     expect(getRes).toHaveHTTPStatus(200);
+  });
+
+  it('POST /users (email error)', async () => {
+    const res1 = await request.agent(server)
+      .post('/users')
+      .type('form')
+      .send({ form: { ...user2, email: 'not email' } });
+    expect(res1).toHaveHTTPStatus(422);
+  });
+
+  it('POST /users (firsName error)', async () => {
+    const res1 = await request.agent(server)
+      .post('/users')
+      .type('form')
+      .send({ form: { ...user2, firstName: '' } });
+    expect(res1).toHaveHTTPStatus(422);
+  });
+
+  it('POST /users (password error)', async () => {
+    const res1 = await request.agent(server)
+      .post('/users')
+      .type('form')
+      .send({ form: { ...user2, password: '12345', confirmPassword: '12345' } });
+    expect(res1).toHaveHTTPStatus(422);
+  });
+
+  it('POST /users (confirm password error)', async () => {
+    const res1 = await request.agent(server)
+      .post('/users')
+      .type('form')
+      .send({ form: { ...user2, confirmPassword: faker.internet.password() } });
+    expect(res1).toHaveHTTPStatus(422);
   });
 });
 
@@ -109,13 +143,11 @@ describe('Sessions', async () => {
   });
 
   it('POST /sessions (errors)', async () => {
-    const res = await request.agent(server)
+    const res1 = await request.agent(server)
       .post('/sessions')
       .type('form')
       .send({ form: { email: 'impossible@user.mail', password: '1qwertY1' } });
-    expect(res).toHaveHTTPStatus(422);
-    // const url = res.headers.location;
-    // expect(url).toBe('/sessions/new');
+    expect(res1).toHaveHTTPStatus(422);
   });
 });
 

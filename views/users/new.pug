@@ -2,8 +2,9 @@ extends ../layouts/application.pug
 
 block content
   +formFor(f, { url: urlFor('users'), method: 'post' })
-    +input(f, 'email')
+    +input(f, 'email', { as: 'email' })
     +input(f, 'firstName')
     +input(f, 'lastName')
     +input(f, 'password', { as: 'password' })
+    +input(f, 'confirmPassword', { as: 'password' })
     +button(f, { value: 'Save', classList: ['btn-success'] })

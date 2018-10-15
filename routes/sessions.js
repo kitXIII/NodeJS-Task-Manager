@@ -31,7 +31,6 @@ export default (router, { logger }) => {
       ctx.state.flash = { get: () => ({ message: 'Email or password were wrong', type: 'warning' }) };
       ctx.status = 422;
       ctx.render('sessions/new', { f: buildFormObj({ email }) });
-      // ctx.redirect(router.url('newSession'));
     })
     .delete('session', '/sessions', (ctx) => {
       ctx.session = {};
