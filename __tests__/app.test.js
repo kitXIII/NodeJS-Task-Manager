@@ -20,7 +20,7 @@ beforeAll(async () => {
   jasmine.addMatchers(matchers);
 });
 
-describe('Main requests', () => {
+describe('Basic requests', () => {
   let server;
 
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('Main requests', () => {
   });
 });
 
-describe('Users', () => {
+describe('Users requests', () => {
   let server;
   const user = getFakeUser();
 
@@ -67,11 +67,11 @@ describe('Users', () => {
 
   it('POST /users', async () => {
     const someUser = getFakeUser();
-    const postRes = await request.agent(server)
+    const res = await request.agent(server)
       .post('/users')
       .send({ form: someUser });
-    expect(postRes).toHaveHTTPStatus(302);
-    const url = postRes.headers.location;
+    expect(res).toHaveHTTPStatus(302);
+    const url = res.headers.location;
     expect(url).toBe('/');
 
     const userFromDB = await User.findOne({
@@ -91,32 +91,42 @@ describe('Users', () => {
     expect(getRes).toHaveHTTPStatus(200);
   });
 
+  it('POST /users (email duplicate)', async () => {
+    const someUser = getFakeUser();
+    await User.create(someUser);
+
+    const res = await request.agent(server)
+      .post('/users')
+      .send({ form: someUser });
+    expect(res).toHaveHTTPStatus(422);
+  });
+
   it('POST /users (email error)', async () => {
-    const res1 = await request.agent(server)
+    const res = await request.agent(server)
       .post('/users')
       .send({ form: { ...user, email: 'not email' } });
-    expect(res1).toHaveHTTPStatus(422);
+    expect(res).toHaveHTTPStatus(422);
   });
 
   it('POST /users (firsName error)', async () => {
-    const res1 = await request.agent(server)
+    const res = await request.agent(server)
       .post('/users')
       .send({ form: { ...user, firstName: '' } });
-    expect(res1).toHaveHTTPStatus(422);
+    expect(res).toHaveHTTPStatus(422);
   });
 
   it('POST /users (password error)', async () => {
-    const res1 = await request.agent(server)
+    const res = await request.agent(server)
       .post('/users')
       .send({ form: { ...user, password: '12345', confirmPassword: '12345' } });
-    expect(res1).toHaveHTTPStatus(422);
+    expect(res).toHaveHTTPStatus(422);
   });
 
   it('POST /users (confirm password error)', async () => {
-    const res1 = await request.agent(server)
+    const res = await request.agent(server)
       .post('/users')
       .send({ form: { ...user, confirmPassword: faker.internet.password() } });
-    expect(res1).toHaveHTTPStatus(422);
+    expect(res).toHaveHTTPStatus(422);
   });
 
   afterEach((done) => {
@@ -125,7 +135,7 @@ describe('Users', () => {
   });
 });
 
-describe('Sessions', () => {
+describe('Sessions requests', () => {
   let server;
   let user;
 
@@ -146,12 +156,12 @@ describe('Sessions', () => {
 
   it('POST /sessions', async () => {
     const { email, password } = user;
-    const postRes = await request.agent(server)
+    const res = await request.agent(server)
       .post('/sessions')
       .send({ form: { email, password } });
-    expect(postRes).toHaveHTTPStatus(302);
+    expect(res).toHaveHTTPStatus(302);
 
-    const url = postRes.headers.location;
+    const url = res.headers.location;
     expect(url).toBe('/');
   });
 
