@@ -48,7 +48,6 @@ describe('Main requests', () => {
 describe('Users', () => {
   let server;
   const user = getFakeUser();
-  const user2 = getFakeUser();
 
   beforeEach(() => {
     server = app().listen();
@@ -66,20 +65,26 @@ describe('Users', () => {
     expect(res).toHaveHTTPStatus(200);
   });
 
-  it('POST /users && GET /users/:id', async () => {
+  it('POST /users', async () => {
+    const someUser = getFakeUser();
     const postRes = await request.agent(server)
       .post('/users')
-      .send({ form: user });
+      .send({ form: someUser });
     expect(postRes).toHaveHTTPStatus(302);
     const url = postRes.headers.location;
     expect(url).toBe('/');
 
     const userFromDB = await User.findOne({
       where: {
-        email: user.email,
+        email: someUser.email,
       },
     });
     expect(userFromDB).toBeDefined();
+  });
+
+  it('GET /users/:id', async () => {
+    const someUser = getFakeUser();
+    const userFromDB = await User.create(someUser);
 
     const getRes = await request.agent(server)
       .get(`/users/${userFromDB.id}`);
@@ -89,32 +94,28 @@ describe('Users', () => {
   it('POST /users (email error)', async () => {
     const res1 = await request.agent(server)
       .post('/users')
-      // .type('form')
-      .send({ form: { ...user2, email: 'not email' } });
+      .send({ form: { ...user, email: 'not email' } });
     expect(res1).toHaveHTTPStatus(422);
   });
 
   it('POST /users (firsName error)', async () => {
     const res1 = await request.agent(server)
       .post('/users')
-      // .type('form')
-      .send({ form: { ...user2, firstName: '' } });
+      .send({ form: { ...user, firstName: '' } });
     expect(res1).toHaveHTTPStatus(422);
   });
 
   it('POST /users (password error)', async () => {
     const res1 = await request.agent(server)
       .post('/users')
-      // .type('form')
-      .send({ form: { ...user2, password: '12345', confirmPassword: '12345' } });
+      .send({ form: { ...user, password: '12345', confirmPassword: '12345' } });
     expect(res1).toHaveHTTPStatus(422);
   });
 
   it('POST /users (confirm password error)', async () => {
     const res1 = await request.agent(server)
       .post('/users')
-      // .type('form')
-      .send({ form: { ...user2, confirmPassword: faker.internet.password() } });
+      .send({ form: { ...user, confirmPassword: faker.internet.password() } });
     expect(res1).toHaveHTTPStatus(422);
   });
 
@@ -124,9 +125,14 @@ describe('Users', () => {
   });
 });
 
-describe('Sessions', async () => {
+describe('Sessions', () => {
   let server;
-  const user = getFakeUser();
+  let user;
+
+  beforeAll(async () => {
+    user = getFakeUser();
+    await User.create(user);
+  });
 
   beforeEach(() => {
     server = app().listen();
@@ -138,40 +144,41 @@ describe('Sessions', async () => {
     expect(res).toHaveHTTPStatus(200);
   });
 
-  it('POST /sessions && POST /sessions with _method: DELETE', async () => {
-    const postUserRes = await request.agent(server)
-      .post('/users')
-      .send({ form: user });
-    expect(postUserRes).toHaveHTTPStatus(302);
-
-    const url1 = postUserRes.headers.location;
-    expect(url1).toBe('/');
-
+  it('POST /sessions', async () => {
     const { email, password } = user;
-    const postSessionRes = await request.agent(server)
+    const postRes = await request.agent(server)
       .post('/sessions')
       .send({ form: { email, password } });
-    expect(postSessionRes).toHaveHTTPStatus(302);
+    expect(postRes).toHaveHTTPStatus(302);
 
-    const url2 = postSessionRes.headers.location;
-    expect(url2).toBe('/');
+    const url = postRes.headers.location;
+    expect(url).toBe('/');
+  });
 
-    const delSessionRes = await request.agent(server)
+  it('DELETE /sessions (with post _method: DELETE)', async () => {
+    const { email, password } = user;
+    const postRes = await request.agent(server)
       .post('/sessions')
+      .send({ form: { email, password } });
+    expect(postRes).toHaveHTTPStatus(302);
+    const cookie = postRes.headers['set-cookie'];
+
+    const delRes = await request.agent(server)
+      .post('/sessions')
+      .set('Cookie', cookie)
       .send({ _method: 'DELETE' });
       // .delete('/sessions');
-    expect(delSessionRes).toHaveHTTPStatus(302);
+    expect(delRes).toHaveHTTPStatus(302);
 
-    const url3 = delSessionRes.headers.location;
-    expect(url3).toBe('/');
+    const url = delRes.headers.location;
+    expect(url).toBe('/');
   });
 
   it('POST /sessions (errors)', async () => {
-    const res1 = await request.agent(server)
+    const res = await request.agent(server)
       .post('/sessions')
-      // .type('form')
       .send({ form: { email: 'impossible@user.mail', password: '1qwertY1' } });
-    expect(res1).toHaveHTTPStatus(422);
+    expect(res).toHaveHTTPStatus(422);
   });
 
   afterEach((done) => {
