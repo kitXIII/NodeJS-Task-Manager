@@ -15,15 +15,18 @@ const getFakeUser = () => ({
   confirmPassword: '11qwertY',
 });
 
-let server;
-
 beforeAll(async () => {
   await sequelize.sync({ force: 'true' });
-  server = app().listen();
   jasmine.addMatchers(matchers);
 });
 
 describe('Main requests', () => {
+  let server;
+
+  beforeEach(() => {
+    server = app().listen();
+  });
+
   it('GET /', async () => {
     const res = await request.agent(server)
       .get('/');
@@ -35,11 +38,21 @@ describe('Main requests', () => {
       .get('/wrong-path');
     expect(res).toHaveHTTPStatus(404);
   });
+
+  afterEach((done) => {
+    server.close();
+    done();
+  });
 });
 
 describe('Users', () => {
+  let server;
   const user = getFakeUser();
   const user2 = getFakeUser();
+
+  beforeEach(() => {
+    server = app().listen();
+  });
 
   it('GET /users', async () => {
     const res = await request.agent(server)
@@ -67,6 +80,7 @@ describe('Users', () => {
       },
     });
     expect(userFromDB).toBeDefined();
+
     const getRes = await request.agent(server)
       .get(`/users/${userFromDB.id}`);
     expect(getRes).toHaveHTTPStatus(200);
@@ -103,10 +117,20 @@ describe('Users', () => {
       .send({ form: { ...user2, confirmPassword: faker.internet.password() } });
     expect(res1).toHaveHTTPStatus(422);
   });
+
+  afterEach((done) => {
+    server.close();
+    done();
+  });
 });
 
 describe('Sessions', async () => {
+  let server;
   const user = getFakeUser();
+
+  beforeEach(() => {
+    server = app().listen();
+  });
 
   it('GET /sessions/new', async () => {
     const res = await request.agent(server)
@@ -149,9 +173,9 @@ describe('Sessions', async () => {
       .send({ form: { email: 'impossible@user.mail', password: '1qwertY1' } });
     expect(res1).toHaveHTTPStatus(422);
   });
-});
 
-afterAll((done) => {
-  server.close();
-  done();
+  afterEach((done) => {
+    server.close();
+    done();
+  });
 });
