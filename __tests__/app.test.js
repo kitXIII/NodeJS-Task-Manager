@@ -89,7 +89,7 @@ describe('Users', () => {
   it('POST /users (email error)', async () => {
     const res1 = await request.agent(server)
       .post('/users')
-      .type('form')
+      // .type('form')
       .send({ form: { ...user2, email: 'not email' } });
     expect(res1).toHaveHTTPStatus(422);
   });
@@ -97,7 +97,7 @@ describe('Users', () => {
   it('POST /users (firsName error)', async () => {
     const res1 = await request.agent(server)
       .post('/users')
-      .type('form')
+      // .type('form')
       .send({ form: { ...user2, firstName: '' } });
     expect(res1).toHaveHTTPStatus(422);
   });
@@ -105,7 +105,7 @@ describe('Users', () => {
   it('POST /users (password error)', async () => {
     const res1 = await request.agent(server)
       .post('/users')
-      .type('form')
+      // .type('form')
       .send({ form: { ...user2, password: '12345', confirmPassword: '12345' } });
     expect(res1).toHaveHTTPStatus(422);
   });
@@ -113,7 +113,7 @@ describe('Users', () => {
   it('POST /users (confirm password error)', async () => {
     const res1 = await request.agent(server)
       .post('/users')
-      .type('form')
+      // .type('form')
       .send({ form: { ...user2, confirmPassword: faker.internet.password() } });
     expect(res1).toHaveHTTPStatus(422);
   });
@@ -169,7 +169,7 @@ describe('Sessions', async () => {
   it('POST /sessions (errors)', async () => {
     const res1 = await request.agent(server)
       .post('/sessions')
-      .type('form')
+      // .type('form')
       .send({ form: { email: 'impossible@user.mail', password: '1qwertY1' } });
     expect(res1).toHaveHTTPStatus(422);
   });
