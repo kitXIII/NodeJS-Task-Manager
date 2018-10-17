@@ -119,18 +119,18 @@ describe('Users get edit form page', () => {
     server = app().listen();
   });
 
-  // it('GET /users/:id/edit', async () => {
-  //   const { email, password } = user;
-  //   const postRes = await request.agent(server)
-  //     .post('/sessions')
-  //     .send({ form: { email, password } });
-  //   const cookie = postRes.headers['set-cookie'];
+  it('GET /users/:id/edit', async () => {
+    const { email, password } = user;
+    const postRes = await request.agent(server)
+      .post('/sessions')
+      .send({ form: { email, password } });
+    const cookie = postRes.headers['set-cookie'];
 
-  //   const getRes = await request.agent(server)
-  //     .set('Cookie', cookie)
-  //     .get(`/users/${userFromDB.id}/edit`);
-  //   expect(getRes).toHaveHTTPStatus(200);
-  // });
+    const getRes = await request.agent(server)
+      .set('Cookie', cookie)
+      .get(`/users/${userFromDB.id}/edit`);
+    expect(getRes).toHaveHTTPStatus(200);
+  });
 
   it('GET /users/:id/edit (fail without autority)', async () => {
     const res = await request.agent(server)
@@ -138,25 +138,20 @@ describe('Users get edit form page', () => {
     expect(res).toHaveHTTPStatus(401);
   });
 
-  // it('GET /users/:id/edit (fail with autority, another user)', async () => {
-  //   const someUser = getFakeUser();
-  //   const { email, password } = someUser;
-  //   await User.create(someUser);
-  //   const postRes = await request.agent(server)
-  //     .post('/sessions')
-  //     .send({ form: { email, password } });
-  //   const cookie = postRes.headers['set-cookie'];
+  it('GET /users/:id/edit (fail with autority, another user)', async () => {
+    const someUser = getFakeUser();
+    const { email, password } = someUser;
+    await User.create(someUser);
+    const postRes = await request.agent(server)
+      .post('/sessions')
+      .send({ form: { email, password } });
+    const cookie = postRes.headers['set-cookie'];
 
-  //   const getRes = await request.agent(server)
-  //     .set('Cookie', cookie)
-  //     .get(`/users/${userFromDB.id}/edit`);
-  //   expect(getRes).toHaveHTTPStatus(401);
-
-  //   const url = getRes.headers.location;
-  //   const res = await request.agent(server)
-  //     .get(url);
-  //   expect(res).toHaveHTTPStatus(200);
-  // });
+    const getRes = await request.agent(server)
+      .set('Cookie', cookie)
+      .get(`/users/${userFromDB.id}/edit`);
+    expect(getRes).toHaveHTTPStatus(401);
+  });
 
   afterEach((done) => {
     server.close();
