@@ -39,12 +39,13 @@ export default () => {
       const status = ctx.status || 404;
       logger(`Koa finish, status: ${status}`);
       if (status === 404) {
-        ctx.throw(404, `Page not found on ${ctx.method} ${ctx.url}`);
+        ctx.throw(404);
       }
     } catch (err) {
-      ctx.status = err.status || 500;
-      if (ctx.status === 404) {
-        await ctx.render('404');
+      const { status, message } = err;
+      ctx.status = status || 500;
+      if (ctx.status !== 500) {
+        await ctx.render('error', { status, message });
         logger(err.message);
       } else {
         await ctx.render('500');

@@ -4,6 +4,20 @@ import db from '../models';
 
 const { User } = db;
 
+const getUserById = async (id, ctx, logger = console.log) => {
+  logger(`Users: getting user with id: ${id} from DB`);
+  const user = await User.findOne({
+    where: {
+      id,
+    },
+  });
+  if (!user) {
+    logger(`User with userId: ${id} not found`);
+    ctx.throw(404);
+  }
+  return user;
+};
+
 export default (router, { logger }) => {
   router
     .get('users', '/users', async (ctx) => {
@@ -41,16 +55,15 @@ export default (router, { logger }) => {
     })
     .get('user', '/users/:id', async (ctx) => {
       const { id } = ctx.params;
-      logger(`Users: getting user with id: ${id} from DB`);
-      const user = await User.findOne({
-        where: {
-          id,
-        },
-      });
-      if (!user) {
-        logger('Users: user not found in DB');
-        ctx.throw(404, `User with userId: ${id} not found`);
-      }
+      const user = await getUserById(id, ctx, logger);
       ctx.render('users/user', { user });
+    })
+    .get('userEdit', '/users/:id/edit', async (ctx) => {
+      const { id } = ctx.params;
+      const user = await getUserById(id, ctx, logger);
+      if (!ctx.state.isSignedIn() || id !== ctx.state.userId) {
+        ctx.throw(401);
+      }
+      ctx.render('users/edit', { f: buildFormObj(user) });
     });
 };
