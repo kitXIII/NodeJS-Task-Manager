@@ -5,7 +5,7 @@ import db from '../models';
 
 const { User } = db;
 
-const getUserById = async (id, ctx, logger = console.log) => {
+const getUserById = async (id, ctx, logger) => {
   logger(`Users: getting user with id: ${id} from DB`);
   const user = await User.findOne({
     where: {
@@ -25,6 +25,12 @@ const throwIfNotOwnerLogged = (owner, ctx, logger) => {
     ctx.throw(401);
   }
   logger('Users: OK');
+};
+
+const getRequestBodyFormData = (allowedFields, ctx) => {
+  const { form: rawData } = ctx.request.body;
+  const data = _.pickBy(_.pick(rawData, allowedFields), str => str);
+  return data;
 };
 
 export default (router, { logger }) => {
@@ -57,9 +63,9 @@ export default (router, { logger }) => {
         logger('Users: new user has been created');
         ctx.flash.set({ message: 'User has been created', type: 'success' });
         ctx.redirect(router.url('root'));
-      } catch (e) {
+      } catch (err) {
         ctx.status = 422;
-        ctx.render('users/new', { f: buildFormObj(user, e) });
+        ctx.render('users/new', { f: buildFormObj(user, err) });
       }
     })
     .get('user', '/users/:id', async (ctx) => {
@@ -76,9 +82,8 @@ export default (router, { logger }) => {
     .patch('patchUser', '/users/:id', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
       throwIfNotOwnerLogged(user, ctx, logger);
-      const { form: rawData } = ctx.request.body;
       const allowedFields = ['firstName', 'lastName', 'email'];
-      const data = _.pickBy(_.pick(rawData, allowedFields), str => str);
+      const data = getRequestBodyFormData(allowedFields, ctx);
       logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
       try {
         await user.update({ ...data });
@@ -88,7 +93,31 @@ export default (router, { logger }) => {
         ctx.redirect(router.url('user', user.id));
       } catch (err) {
         logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
+        ctx.status = 422;
         ctx.render('users/edit', { f: buildFormObj(user, err) });
       }
+    })
+    .get('editUserPassword', '/users/:id/password/edit', async (ctx) => {
+      const owner = await getUserById(Number(ctx.params.id), ctx, logger);
+      throwIfNotOwnerLogged(owner, ctx, logger);
+      const user = _.pick(owner, ['id']);
+      ctx.render('users/password', { f: buildFormObj(user) });
+    })
+    .patch('patchUserPassword', '/users/:id/password', async (ctx) => {
+      const user = await getUserById(Number(ctx.params.id), ctx, logger);
+      throwIfNotOwnerLogged(user, ctx, logger);
+      const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
+      const data = getRequestBodyFormData(allowedFields, ctx);
+      logger('Users: try to change password');
+      // try {
+      //   await user.update({ ...data });
+      //   logger(`Users: patch user with id: ${user.id}, is OK`);
+      //   ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
+      //   ctx.session.userName = user.firstName;
+      //   ctx.redirect(router.url('user', user.id));
+      // } catch (err) {
+      //   logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
+      //   ctx.render('users/edit', { f: buildFormObj(user, err) });
+      // }
     });
 };
