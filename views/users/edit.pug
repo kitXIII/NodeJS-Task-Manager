@@ -1,12 +1,12 @@
 extends ../layouts/application.pug
 
 block content
-  +formFor(f, { url: urlFor('patchUser', id), method: 'PATCH' })
+  +formFor(f, { url: urlFor('patchUser', f.object.id), method: 'PATCH' })
     +input(f, 'email', { as: 'email' })
     +input(f, 'firstName')
     +input(f, 'lastName')
     .form-group
-      a.btn.btn-info.mr-2(href=urlFor('user', id) data-toggle="tooltip" data-placement="bottom" title="Back") 
+      a.btn.btn-info.mr-2(href=urlFor('user', f.object.id) data-toggle="tooltip" data-placement="bottom" title="Back") 
         i.fas.fa-undo-alt
         span.d-none.d-md-inline &nbsp Back 
       button.btn.btn-success(type='submit' data-toggle="tooltip" data-placement="bottom" title="Apply changes")

@@ -19,6 +19,14 @@ const getUserById = async (id, ctx, logger = console.log) => {
   return user;
 };
 
+const throwIfNotOwnerLogged = (owner, ctx, logger) => {
+  logger('Users: check that logged in user data is requested');
+  if (!ctx.state.isSignedIn() || owner.id !== ctx.state.userId) {
+    ctx.throw(401);
+  }
+  logger('Users: OK');
+};
+
 export default (router, { logger }) => {
   router
     .get('users', '/users', async (ctx) => {
@@ -61,37 +69,26 @@ export default (router, { logger }) => {
       ctx.render('users/user', { user });
     })
     .get('editUser', '/users/:id/edit', async (ctx) => {
-      const id = Number(ctx.params.id);
-      const user = await getUserById(id, ctx, logger);
-      logger('Users: check that logged in user data is requested');
-      if (!ctx.state.isSignedIn() || id !== ctx.state.userId) {
-        ctx.throw(401);
-      }
-      logger('Users: OK');
-      ctx.render('users/edit', { f: buildFormObj(user), id });
+      const user = await getUserById(Number(ctx.params.id), ctx, logger);
+      throwIfNotOwnerLogged(user, ctx, logger);
+      ctx.render('users/edit', { f: buildFormObj(user) });
     })
     .patch('patchUser', '/users/:id', async (ctx) => {
-      const id = Number(ctx.params.id);
-      logger(`Users: request for patch user data: ${id}`);
-      const user = await getUserById(id, ctx, logger);
-      logger('Users: check that logged in user data is requested');
-      if (!ctx.state.isSignedIn() || id !== ctx.state.userId) {
-        ctx.throw(401);
-      }
-      logger('Users: OK');
+      const user = await getUserById(Number(ctx.params.id), ctx, logger);
+      throwIfNotOwnerLogged(user, ctx, logger);
       const { form: rawData } = ctx.request.body;
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = _.pickBy(_.pick(rawData, allowedFields), str => str);
       logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
       try {
         await user.update({ ...data });
-        logger(`Users: patch user with id: ${id}, is OK`);
+        logger(`Users: patch user with id: ${user.id}, is OK`);
         ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
         ctx.session.userName = user.firstName;
-        ctx.redirect(router.url('user', id));
+        ctx.redirect(router.url('user', user.id));
       } catch (err) {
-        logger(`Users: patch user with id: ${id}, problem: ${err.message}`);
-        ctx.render('users/edit', { f: buildFormObj(user, err), id });
+        logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
+        ctx.render('users/edit', { f: buildFormObj(user, err) });
       }
     });
 };
