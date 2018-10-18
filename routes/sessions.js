@@ -33,7 +33,7 @@ export default (router, { logger }) => {
       ctx.render('sessions/new', { f: buildFormObj({ email }) });
     })
     .delete('session', '/sessions', (ctx) => {
-      ctx.session = {};
+      ctx.session = null;
       ctx.redirect(router.url('root'));
     });
 };

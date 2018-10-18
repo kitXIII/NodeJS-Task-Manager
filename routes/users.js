@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import ConfirmPasswordError from '../lib/Errors/ConfirmPasswordError';
 import db from '../models';
@@ -56,14 +57,41 @@ export default (router, { logger }) => {
     .get('user', '/users/:id', async (ctx) => {
       const { id } = ctx.params;
       const user = await getUserById(id, ctx, logger);
+      logger('Users: user data prepared to view');
       ctx.render('users/user', { user });
     })
-    .get('userEdit', '/users/:id/edit', async (ctx) => {
-      const { id } = ctx.params;
+    .get('editUser', '/users/:id/edit', async (ctx) => {
+      const id = Number(ctx.params.id);
       const user = await getUserById(id, ctx, logger);
+      logger('Users: check that logged in user data is requested');
       if (!ctx.state.isSignedIn() || id !== ctx.state.userId) {
         ctx.throw(401);
       }
-      ctx.render('users/edit', { f: buildFormObj(user) });
+      logger('Users: OK');
+      ctx.render('users/edit', { f: buildFormObj(user), id });
+    })
+    .patch('patchUser', '/users/:id', async (ctx) => {
+      const id = Number(ctx.params.id);
+      logger(`Users: request for patch user data: ${id}`);
+      const user = await getUserById(id, ctx, logger);
+      logger('Users: check that logged in user data is requested');
+      if (!ctx.state.isSignedIn() || id !== ctx.state.userId) {
+        ctx.throw(401);
+      }
+      logger('Users: OK');
+      const { form: rawData } = ctx.request.body;
+      const allowedFields = ['firstName', 'lastName', 'email'];
+      const data = _.pickBy(_.pick(rawData, allowedFields), str => str);
+      logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
+      try {
+        await user.update({ ...data });
+        logger(`Users: patch user with id: ${id}, is OK`);
+        ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
+        ctx.session.userName = user.firstName;
+        ctx.redirect(router.url('user', id));
+      } catch (err) {
+        logger(`Users: patch user with id: ${id}, problem: ${err.message}`);
+        ctx.render('users/edit', { f: buildFormObj(user, err), id });
+      }
     });
 };

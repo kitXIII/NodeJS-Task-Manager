@@ -7,4 +7,6 @@ block content
     +input(f, 'lastName')
     +input(f, 'password', { as: 'password' })
     +input(f, 'confirmPassword', { as: 'password' })
-    +button(f, { value: 'Save', classList: ['btn-success'] })
+    button.btn.btn-success(type='submit' data-toggle="tooltip" data-placement="bottom" title="Save input data")
+      | Save &nbsp
+      i.fas.fa-check

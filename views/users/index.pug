@@ -10,6 +10,7 @@ block content
     tbody
       each user in users
         tr
-          td= user.fullName
+          td
+            a(href=urlFor('user', user.id))= user.fullName
           td= user.email
           td= user.created
