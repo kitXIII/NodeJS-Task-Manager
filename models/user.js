@@ -40,7 +40,7 @@ export default (sequelize, DataTypes) => {
       },
       validate: {
         is: {
-          args: /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,64}$/,
+          args: /^(?=.*\d)(?=.*[A-Z])([a-zA-Z0-9]){8,64}$/,
           msg: 'The password length should be between 8 and 64 characters, contain digit, lower case and upper case',
         },
       },

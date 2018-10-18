@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
-import ConfirmPasswordError from '../lib/Errors/ConfirmPasswordError';
+import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
+import encrypt from '../lib/secure';
 import db from '../models';
 
 const { User } = db;
@@ -84,6 +85,11 @@ export default (router, { logger }) => {
       throwIfNotOwnerLogged(user, ctx, logger);
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = getRequestBodyFormData(allowedFields, ctx);
+      if (_.isEmpty(data)) {
+        ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
+        ctx.redirect(router.url('user', user.id));
+        return;
+      }
       logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
       try {
         await user.update({ ...data });
@@ -108,16 +114,34 @@ export default (router, { logger }) => {
       throwIfNotOwnerLogged(user, ctx, logger);
       const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
       const data = getRequestBodyFormData(allowedFields, ctx);
+      if (_.isEmpty(data)) {
+        ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
+        ctx.redirect(router.url('user', user.id));
+        return;
+      }
       logger('Users: try to change password');
-      // try {
-      //   await user.update({ ...data });
-      //   logger(`Users: patch user with id: ${user.id}, is OK`);
-      //   ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
-      //   ctx.session.userName = user.firstName;
-      //   ctx.redirect(router.url('user', user.id));
-      // } catch (err) {
-      //   logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
-      //   ctx.render('users/edit', { f: buildFormObj(user, err) });
-      // }
+      try {
+        if (!data.password) {
+          logger('Users: password error');
+          throw new NewPasswordError("Password can't be empty");
+        }
+        if (!data.currentPassword || user.passwordDigest !== encrypt(data.currentPassword)) {
+          logger('Users: current password error');
+          throw new CurrentPasswordError('Wrong value');
+        }
+        if (data.password !== data.confirmPassword) {
+          logger('Users: password not match');
+          throw new ConfirmPasswordError('Values of entered passwords must match');
+        }
+        const { password } = data;
+        await user.update({ password });
+        logger(`Users: user with id: ${user.id} change password successful`);
+        ctx.flash.set({ message: 'Your password has been changed.', type: 'success' });
+        ctx.redirect(router.url('user', user.id));
+      } catch (err) {
+        logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
+        ctx.status = 422;
+        ctx.render('users/password', { f: buildFormObj(user, err) });
+      }
     });
 };

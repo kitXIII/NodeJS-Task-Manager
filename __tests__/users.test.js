@@ -224,14 +224,18 @@ describe('Users updade requests', () => {
   let userFromDB;
   let cookie;
 
+  let currentPassword;
+  const password = '33Cy23Bn';
+  const confirmPassword = '33Cy23Bn';
+
   beforeEach(async () => {
     server = app().listen();
     user = getFakeUser();
     userFromDB = await User.create(user);
-    const { email, password } = user;
+    currentPassword = userFromDB.password;
     const res = await request.agent(server)
       .post('/sessions')
-      .send({ form: { email, password } });
+      .send({ form: { email: user.email, password: user.password } });
     cookie = res.headers['set-cookie'];
   });
 
@@ -293,49 +297,99 @@ describe('Users updade requests', () => {
     expect(patchedUserFromDB.email).toBe(email);
   });
 
-  // it('PATCH /users/:id (password)', async () => {
-  //   const password = 'ZxCv23Bn';
-  //   const confirmPassword = 'ZxCv23Bn';
+  it('PATCH /users/:id/password', async () => {
+    const res = await request.agent(server)
+      .patch(`/users/${userFromDB.id}/password`)
+      .set('Cookie', cookie)
+      .send({ form: { currentPassword, password, confirmPassword } });
+    expect(res).toHaveHTTPStatus(302);
 
-  //   const res = await request.agent(server)
-  //     .patch(`/users/${userFromDB.id}`)
-  //     .set('Cookie', cookie)
-  //     .send({ form: { password, confirmPassword } });
-  //   expect(res).toHaveHTTPStatus(200);
-  //   const recivedCookie = res.headers['set-cookie'];
+    const patchedUserFromDB = await User.findOne({
+      where: {
+        id: userFromDB.id,
+      },
+    });
 
-  //   const patchedUserFromDB = await User.findOne({
-  //     where: {
-  //       id: userFromDB.id,
-  //     },
-  //   });
+    expect(patchedUserFromDB.passwordDigest).toBe(encrypt(password));
+  });
 
-  //   expect(patchedUserFromDB.passwordDigest).toBe(encrypt(password));
-  //   expect(cookie).not.toBe(recivedCookie);
-  // });
+  it('PATCH /users/:id/password (fail without autority)', async () => {
+    const delSessionRes = await request.agent(server)
+      .delete('/sessions')
+      .set('Cookie', cookie);
+    expect(delSessionRes).toHaveHTTPStatus(302);
 
-  // it('PATCH /users/:id (fail without autority)', async () => {
-  //   const { firstName } = getFakeUser();
-  //   const delSessionRes = await request.agent(server)
-  //     .delete('/sessions')
-  //     .set('Cookie', cookie);
-  //   expect(delSessionRes).toHaveHTTPStatus(302);
+    const res = await request.agent(server)
+      .patch(`/users/${userFromDB.id}/password`)
+      .send({ form: { currentPassword, password, confirmPassword } });
+    expect(res).toHaveHTTPStatus(401);
 
-  //   const res = await request.agent(server)
-  //     .patch(`/users/${userFromDB.id}`)
-  //     .send({ form: { firstName } });
-  //   expect(res).toHaveHTTPStatus(401);
-  // });
+    const patchedUserFromDB = await User.findOne({
+      where: {
+        id: userFromDB.id,
+      },
+    });
 
-  // it('PATCH /users/:id/edit (fail with autority, another user)', async () => {
-  //   const newUserFromDB = await User.create(getFakeUser());
-  //   const { firstName } = getFakeUser();
-  //   const res = await request.agent(server)
-  //     .patch(`/users/${newUserFromDB.id}`)
-  //     .set('Cookie', cookie)
-  //     .send({ form: { firstName } });
-  //   expect(res).toHaveHTTPStatus(401);
-  // });
+    expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
+  });
+
+  it('PATCH /users/:id/password (fail with alian autority)', async () => {
+    const newUserFromDB = await User.create(getFakeUser());
+
+    const res = await request.agent(server)
+      .patch(`/users/${newUserFromDB.id}/password`)
+      .set('Cookie', cookie)
+      .send({ form: { currentPassword, password, confirmPassword } });
+    expect(res).toHaveHTTPStatus(401);
+  });
+
+  it('PATCH /users/:id/password (fail with wrong current password', async () => {
+    const res = await request.agent(server)
+      .patch(`/users/${userFromDB.id}/password`)
+      .set('Cookie', cookie)
+      .send({ form: { currentPassword: '123wronG', password, confirmPassword } });
+    expect(res).toHaveHTTPStatus(422);
+
+    const patchedUserFromDB = await User.findOne({
+      where: {
+        id: userFromDB.id,
+      },
+    });
+
+    expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
+  });
+
+  it('PATCH /users/:id/password (fail with wrong confirm password', async () => {
+    const res = await request.agent(server)
+      .patch(`/users/${userFromDB.id}/password`)
+      .set('Cookie', cookie)
+      .send({ form: { currentPassword, password, confirmPassword: '123wronG' } });
+    expect(res).toHaveHTTPStatus(422);
+  });
+
+  it('PATCH /users/:id/password (fail without confirm password', async () => {
+    const res = await request.agent(server)
+      .patch(`/users/${userFromDB.id}/password`)
+      .set('Cookie', cookie)
+      .send({ form: { currentPassword, password } });
+    expect(res).toHaveHTTPStatus(422);
+  });
+
+  it('PATCH /users/:id/password (fail with easy password', async () => {
+    const res = await request.agent(server)
+      .patch(`/users/${userFromDB.id}/password`)
+      .set('Cookie', cookie)
+      .send({ form: { currentPassword, password: '12345abc', confirmPassword: '12345abc' } });
+    expect(res).toHaveHTTPStatus(422);
+
+    const patchedUserFromDB = await User.findOne({
+      where: {
+        id: userFromDB.id,
+      },
+    });
+
+    expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
+  });
 
   afterEach((done) => {
     server.close();
