@@ -397,55 +397,55 @@ describe('Users updade requests', () => {
   });
 });
 
-// describe('Users delete requests', () => {
-//   let server;
+describe('Users delete requests', () => {
+  let server;
 
-//   beforeEach(async () => {
-//     server = app().listen();
-//   });
+  beforeEach(async () => {
+    server = app().listen();
+  });
 
-//   it('DELETE /users/:id', async () => {
-//     const user = getFakeUser();
-//     const userFromDB = await User.create(user);
-//     const { email, password } = user;
-//     const res = await request.agent(server)
-//       .post('/sessions')
-//       .send({ form: { email, password } });
-//     expect(res).toHaveHTTPStatus(302);
-//     const cookie = res.headers['set-cookie'];
+  it('DELETE /users/:id', async () => {
+    const user = getFakeUser();
+    const userFromDB = await User.create(user);
+    const { email, password } = user;
+    const res = await request.agent(server)
+      .post('/sessions')
+      .send({ form: { email, password } });
+    expect(res).toHaveHTTPStatus(302);
+    const cookie = res.headers['set-cookie'];
 
-//     const delRes = await request.agent(server)
-//       .set('Cookie', cookie)
-//       .delete(`/users/${userFromDB.id}`);
-//     expect(delRes).toHaveHTTPStatus(200);
-//   });
+    const delRes = await request.agent(server)
+      .delete(`/users/${userFromDB.id}`)
+      .set('Cookie', cookie);
+    expect(delRes).toHaveHTTPStatus(302);
+  });
 
-//   it('DELETE /users/:id (fail without autority)', async () => {
-//     const userFromDB = await User.create(getFakeUser());
-//     const res = await request.agent(server)
-//       .delete(`/users/${userFromDB.id}`);
-//     expect(res).toHaveHTTPStatus(401);
-//   });
+  it('DELETE /users/:id (fail without autority)', async () => {
+    const userFromDB = await User.create(getFakeUser());
+    const res = await request.agent(server)
+      .delete(`/users/${userFromDB.id}`);
+    expect(res).toHaveHTTPStatus(401);
+  });
 
-//   it('DELETE /users/:id/edit (fail with autority, another user)', async () => {
-//     const user = getFakeUser();
-//     await User.create(user);
-//     const { email, password } = user;
-//     const res = await request.agent(server)
-//       .post('/sessions')
-//       .send({ form: { email, password } });
-//     expect(res).toHaveHTTPStatus(302);
-//     const cookie = res.headers['set-cookie'];
+  it('DELETE /users/:id/edit (fail with autority, another user)', async () => {
+    const user = getFakeUser();
+    await User.create(user);
+    const { email, password } = user;
+    const res = await request.agent(server)
+      .post('/sessions')
+      .send({ form: { email, password } });
+    expect(res).toHaveHTTPStatus(302);
+    const cookie = res.headers['set-cookie'];
 
-//     const newUserFromDB = await User.create(getFakeUser());
-//     const delRes = await request.agent(server)
-//       .set('Cookie', cookie)
-//       .delete(`/users/${newUserFromDB.id}`);
-//     expect(delRes).toHaveHTTPStatus(401);
-//   });
+    const newUserFromDB = await User.create(getFakeUser());
+    const delRes = await request.agent(server)
+      .set('Cookie', cookie)
+      .delete(`/users/${newUserFromDB.id}`);
+    expect(delRes).toHaveHTTPStatus(401);
+  });
 
-//   afterEach((done) => {
-//     server.close();
-//     done();
-//   });
-// });
+  afterEach((done) => {
+    server.close();
+    done();
+  });
+});

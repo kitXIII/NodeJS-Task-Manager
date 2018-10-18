@@ -143,5 +143,20 @@ export default (router, { logger }) => {
         ctx.status = 422;
         ctx.render('users/password', { f: buildFormObj(user, err) });
       }
+    })
+    .delete('deleteUser', '/users/:id', async (ctx) => {
+      const user = await getUserById(Number(ctx.params.id), ctx, logger);
+      throwIfNotOwnerLogged(user, ctx, logger);
+      logger(`Users: try to delete user with id: ${user.id}`);
+      try {
+        await user.destroy();
+        logger(`Users: user with id: ${user.id} deleted`);
+        ctx.session = null;
+        ctx.redirect(router.url('root'));
+      } catch (err) {
+        logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
+        ctx.status = 422;
+        ctx.render('users/user', { user });
+      }
     });
 };
