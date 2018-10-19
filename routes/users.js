@@ -151,7 +151,8 @@ export default (router, { logger }) => {
       try {
         await user.destroy();
         logger(`Users: user with id: ${user.id} deleted`);
-        ctx.session = null;
+        ctx.session = {};
+        ctx.flash.set({ message: 'Your user data has been completely deleted from the system. Farewell.', type: 'info' });
         ctx.redirect(router.url('root'));
       } catch (err) {
         logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
