@@ -1,12 +1,15 @@
 extends ../layouts/application.pug
 
 block content
-  +formFor(f, { url: urlFor('users'), method: 'post' })
-    +input(f, 'email', { as: 'email' })
-    +input(f, 'firstName')
-    +input(f, 'lastName')
-    +input(f, 'password', { as: 'password' })
-    +input(f, 'confirmPassword', { as: 'password' })
-    button.btn.btn-success(type='submit' data-toggle='tooltip' data-placement='bottom' title='Save input data')
-      | Save &nbsp
-      i.fas.fa-check
+  .row.justify-content-center
+    .card.col.mx-3.col-md-9
+      .card-body
+        +formFor(f, { url: urlFor('users'), method: 'post' })
+          +input(f, 'email', { as: 'email' })
+          +input(f, 'firstName')
+          +input(f, 'lastName')
+          +input(f, 'password', { as: 'password' })
+          +input(f, 'confirmPassword', { as: 'password' })
+          button.btn.btn-success(type='submit' data-toggle='tooltip' data-placement='bottom' title='Save input data')
+            | Save &nbsp
+            i.fas.fa-check

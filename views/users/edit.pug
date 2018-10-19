@@ -1,15 +1,18 @@
 extends ../layouts/application.pug
 
 block content
-  +formFor(f, { url: urlFor('patchUser', f.object.id), method: 'PATCH', dataConfirm: 'Are you sure you want to submit changes?' })
-    +input(f, 'email', { as: 'email' })
-    +input(f, 'firstName')
-    +input(f, 'lastName')
-    .form-group
-      a.btn.btn-info.mr-2(href=urlFor('user', f.object.id) data-toggle="tooltip" data-placement="bottom" title="Back") 
-        i.fas.fa-undo-alt
-        span.d-none.d-md-inline &nbsp Back 
-      button.btn.btn-success(type='submit' data-toggle="tooltip" data-placement="bottom" title="Apply changes")
-        span.d-none.d-md-inline Apply &nbsp
-        i.fas.fa-arrow-right
+  .row.justify-content-center
+    .card.col.mx-3.col-md-9
+      .card-body
+        +formFor(f, { url: urlFor('patchUser', f.object.id), method: 'PATCH', dataConfirm: 'Are you sure you want to submit changes?' })
+          +input(f, 'email', { as: 'email' })
+          +input(f, 'firstName')
+          +input(f, 'lastName')
+          .form-group
+            a.btn.btn-info.mr-2(href=urlFor('user', f.object.id) data-toggle="tooltip" data-placement="bottom" title="Back") 
+              i.fas.fa-undo-alt
+              span.d-none.d-md-inline &nbsp Back 
+            button.btn.btn-success(type='submit' data-toggle="tooltip" data-placement="bottom" title="Apply changes")
+              span.d-none.d-md-inline Apply &nbsp
+              i.fas.fa-arrow-right
     
