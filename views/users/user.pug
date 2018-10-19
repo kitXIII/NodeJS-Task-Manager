@@ -15,28 +15,28 @@ block content
 
   if (user.id === userId)
     .d-flex
-      a.btn.btn-info.mr-2(href=urlFor('editUser', user.id) data-toggle='tooltip' data-placement='bottom' title='Edit')
+      a.btn.btn-info.mr-2(href=urlFor('editUser', user.id) data-tooltip='true' data-placement='bottom' title='Edit')
         span.d-none.d-md-inline Edit &nbsp
         i.fas.fa-pen
-      a.btn.btn-secondary.mr-2(href=urlFor('editUserPassword', user.id) data-toggle='tooltip' data-placement='bottom' title='Change password')
+      a.btn.btn-secondary.mr-2(href=urlFor('editUserPassword', user.id) data-tooltip='true' data-placement='bottom' title='Change password')
         span.d-none.d-md-inline Change password  &nbsp
         i.fas.fa-key
-      button.btn.btn-danger(type="button" data-toggle="modal" data-target="#deleteUserModal")
+      button.btn.btn-danger(type='button' data-toggle='modal' data-target='#deleteUserModal' data-tooltip='true' data-placement='bottom' title='Remove user')
         span.d-none.d-md-inline Remove user &nbsp
         i.fas.fa-trash-alt
   | <!-- Modal -->
-  #deleteUserModal.modal.fade(tabindex="-1")
+  #deleteUserModal.modal.fade(tabindex='-1')
     .modal-dialog
       .modal-content
         .modal-header
           h5#deleteUserModalLabel.modal-title Attention!
-          button.close(type="button" data-dismiss="modal")
+          button.close(type='button' data-dismiss='modal')
             span &times
         .modal-body
           | These actions will lead to the complete removal of your account from the system.
           | Are you sure you want to delete user?
         .modal-footer
-          button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
           a.btn.btn-danger(href=urlFor('deleteUser', user.id) data-method='delete')
             span.d-none.d-md-inline Yes? I am sure  &nbsp
             i.fas.fa-trash-alt

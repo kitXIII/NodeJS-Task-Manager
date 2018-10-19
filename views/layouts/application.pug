@@ -2,20 +2,20 @@ include ../mixins/forms.pug
 include ../mixins/flash.pug
 
 doctype html
-html(lang="en")
+html(lang='en')
   head
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='description', content='')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     title= Title
-    link(rel="stylesheet", href="/assets/css/main.css")
+    link(rel='stylesheet', href='/assets/css/main.css')
     script(src='/assets/js/main.js')
   body
     header.navbar.navbar-expand-md.navbar-dark.fixed-top.bg-dark
       a.navbar-brand(href=urlFor('root')) Task Manager
       
-      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="true" aria-label="Toggle navigation")
+      button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarCollapse' aria-controls='navbarCollapse' aria-expanded='true' aria-label='Toggle navigation')
         span.navbar-toggler-icon
       
       .collapse.navbar-collapse#navbarCollapse
@@ -32,15 +32,19 @@ html(lang="en")
                 i.fas.fa-user.mr-1
                 span= userName
             li.nav-item
-              a.btn.btn-link.nav-link(href=urlFor('session') data-method='delete')
+              a.nav-link.transition(href=urlFor('session') data-method='delete')
                 span.mr-1 Sign Out
                 i.fas.fa-sign-out-alt
           else
             li.nav-item
-              a.nav-link.btn.navbar-btn(href=urlFor('newSession')) Sign In
+              a.nav-link.transition(href=urlFor('newSession'))
+                span.mr-1 Sign In
+                i.fas.fa-sign-in-alt
             li.nav-item
-              a.nav-link.btn.navbar-btn(href=urlFor('newUser')) Sign Up
-    main.container(role="main")
+              a.nav-link.transition(href=urlFor('newUser'))
+                span.mr-1 Sign Up
+                i.fas.fa-user-plus
+    main.container(role='main')
       - const flashOptions = flash.get()
       if flashOptions
         +flash(f, flashOptions)        
@@ -48,4 +52,4 @@ html(lang="en")
     footer.footer
       .container
         span.text-muted For more information, visit the 
-          a(href="https://ru.hexlet.io/professions/backend#projects") Hexlet website
+          a(href='https://ru.hexlet.io/professions/backend#projects') Hexlet website

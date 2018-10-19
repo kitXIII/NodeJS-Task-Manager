@@ -96,7 +96,7 @@ export default () => {
     pretty: true,
     compileDebug: true,
     locals: {
-      Title: 'Tasks \uf0ae',
+      Title: 'Tasks',
     },
     basedir: path.join(__dirname, 'views'),
     helperPath: [

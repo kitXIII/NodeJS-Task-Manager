@@ -9,10 +9,10 @@ block content
           +input(f, 'firstName')
           +input(f, 'lastName')
           .form-group
-            a.btn.btn-info.mr-2(href=urlFor('user', f.object.id) data-toggle="tooltip" data-placement="bottom" title="Back") 
+            a.btn.btn-info.mr-2(href=urlFor('user', f.object.id) data-tooltip='true' data-placement='bottom' title='Back') 
               i.fas.fa-undo-alt
               span.d-none.d-md-inline &nbsp Back 
-            button.btn.btn-success(type='submit' data-toggle="tooltip" data-placement="bottom" title="Apply changes")
+            button.btn.btn-success(type='submit' data-tooltip='true' data-placement='bottom' title='Apply changes')
               span.d-none.d-md-inline Apply &nbsp
               i.fas.fa-arrow-right
     
