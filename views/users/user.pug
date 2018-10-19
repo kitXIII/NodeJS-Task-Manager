@@ -15,12 +15,12 @@ block content
 
   if (user.id === userId)
     .d-flex
-      a.btn.btn-info.mr-2(href=urlFor('editUser', user.id) data-toggle="tooltip" data-placement="bottom" title="Edit")
+      a.btn.btn-info.mr-2(href=urlFor('editUser', user.id) data-toggle='tooltip' data-placement='bottom' title='Edit')
         span.d-none.d-md-inline Edit &nbsp
         i.fas.fa-pen
-      a.btn.btn-secondary.mr-2(href=urlFor('editUserPassword', user.id) data-toggle="tooltip" data-placement="bottom" title="Change password")
+      a.btn.btn-secondary.mr-2(href=urlFor('editUserPassword', user.id) data-toggle='tooltip' data-placement='bottom' title='Change password')
         span.d-none.d-md-inline Change password  &nbsp
         i.fas.fa-key
-      a.btn.btn-danger(href=urlFor('removeUser', user.id) data-toggle="tooltip" data-placement="bottom" title="Revove user")
+      a.btn.btn-danger(href=urlFor('deleteUser', user.id) data-method='delete' data-toggle='tooltip' data-placement='bottom' title='Delete user')
         span.d-none.d-md-inline Remove user  &nbsp
         i.fas.fa-trash-alt

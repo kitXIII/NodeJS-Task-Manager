@@ -133,13 +133,13 @@ describe('Users get edit form page', () => {
     expect(getRes).toHaveHTTPStatus(200);
   });
 
-  it('GET /users/:id/edit (fail without autority)', async () => {
+  it('GET /users/:id/edit (fails without autority)', async () => {
     const res = await request.agent(server)
       .get(`/users/${userFromDB.id}/edit`);
     expect(res).toHaveHTTPStatus(401);
   });
 
-  it('GET /users/:id/edit (fail with autority, another user)', async () => {
+  it('GET /users/:id/edit (fails with autority, another user)', async () => {
     const someUser = getFakeUser();
     await User.create(someUser);
     const { email, password } = someUser;
@@ -189,13 +189,13 @@ describe('Users get change password form', () => {
     expect(getRes).toHaveHTTPStatus(200);
   });
 
-  it('GET /users/:id/password/edit (fail without autority)', async () => {
+  it('GET /users/:id/password/edit (fails without autority)', async () => {
     const res = await request.agent(server)
       .get(`/users/${userFromDB.id}/password/edit`);
     expect(res).toHaveHTTPStatus(401);
   });
 
-  it('GET /users/:id/password/edit (fail with autority by another user)', async () => {
+  it('GET /users/:id/password/edit (fails with someone else authorization)', async () => {
     const someUser = getFakeUser();
     await User.create(someUser);
     const { email, password } = someUser;
@@ -313,7 +313,7 @@ describe('Users updade requests', () => {
     expect(patchedUserFromDB.passwordDigest).toBe(encrypt(password));
   });
 
-  it('PATCH /users/:id/password (fail without autority)', async () => {
+  it('PATCH /users/:id/password (fails without autority)', async () => {
     const delSessionRes = await request.agent(server)
       .delete('/sessions')
       .set('Cookie', cookie);
@@ -333,7 +333,7 @@ describe('Users updade requests', () => {
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
   });
 
-  it('PATCH /users/:id/password (fail with alian autority)', async () => {
+  it('PATCH /users/:id/password (fails with someone else authorization)', async () => {
     const newUserFromDB = await User.create(getFakeUser());
 
     const res = await request.agent(server)
@@ -343,7 +343,7 @@ describe('Users updade requests', () => {
     expect(res).toHaveHTTPStatus(401);
   });
 
-  it('PATCH /users/:id/password (fail with wrong current password', async () => {
+  it('PATCH /users/:id/password (fails with wrong current password', async () => {
     const res = await request.agent(server)
       .patch(`/users/${userFromDB.id}/password`)
       .set('Cookie', cookie)
@@ -359,7 +359,7 @@ describe('Users updade requests', () => {
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
   });
 
-  it('PATCH /users/:id/password (fail with wrong confirm password', async () => {
+  it('PATCH /users/:id/password (fails with wrong confirm password', async () => {
     const res = await request.agent(server)
       .patch(`/users/${userFromDB.id}/password`)
       .set('Cookie', cookie)
@@ -367,7 +367,7 @@ describe('Users updade requests', () => {
     expect(res).toHaveHTTPStatus(422);
   });
 
-  it('PATCH /users/:id/password (fail without confirm password', async () => {
+  it('PATCH /users/:id/password (fails without confirm password', async () => {
     const res = await request.agent(server)
       .patch(`/users/${userFromDB.id}/password`)
       .set('Cookie', cookie)
@@ -375,7 +375,7 @@ describe('Users updade requests', () => {
     expect(res).toHaveHTTPStatus(422);
   });
 
-  it('PATCH /users/:id/password (fail with easy password', async () => {
+  it('PATCH /users/:id/password (fails with easy password', async () => {
     const res = await request.agent(server)
       .patch(`/users/${userFromDB.id}/password`)
       .set('Cookie', cookie)
@@ -420,14 +420,14 @@ describe('Users delete requests', () => {
     expect(delRes).toHaveHTTPStatus(302);
   });
 
-  it('DELETE /users/:id (fail without autority)', async () => {
+  it('DELETE /users/:id (fails without autority)', async () => {
     const userFromDB = await User.create(getFakeUser());
     const res = await request.agent(server)
       .delete(`/users/${userFromDB.id}`);
     expect(res).toHaveHTTPStatus(401);
   });
 
-  it('DELETE /users/:id/edit (fail with autority, another user)', async () => {
+  it('DELETE /users/:id (fails with someone else authorization)', async () => {
     const user = getFakeUser();
     await User.create(user);
     const { email, password } = user;
