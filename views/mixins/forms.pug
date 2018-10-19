@@ -5,7 +5,8 @@ mixin formFor(f, options = { inline: false })
   - const method = _.get(options, 'method', 'get').toLowerCase();
   - const isStandart = _.includes(['get', 'post'], method);
   - const classList = _.get(options, 'classList', '');
-  form(action= url method= isStandart ? method : 'post' class= _.isArray(classList) ? classList.join(' ') : classList)
+  - const dataConfirm = _.get(options, 'dataConfirm', none);
+  form(action= url method= isStandart ? method : 'post' class= _.isArray(classList) ? classList.join(' ') : classList data-confirm= dataConfirm)
     if !isStandart
       input(name='_method' type='hidden' value= method)
     block

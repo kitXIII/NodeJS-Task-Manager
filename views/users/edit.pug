@@ -1,7 +1,7 @@
 extends ../layouts/application.pug
 
 block content
-  +formFor(f, { url: urlFor('patchUser', f.object.id), method: 'PATCH' })
+  +formFor(f, { url: urlFor('patchUser', f.object.id), method: 'PATCH', dataConfirm: 'Are you sure you want to submit changes?' })
     +input(f, 'email', { as: 'email' })
     +input(f, 'firstName')
     +input(f, 'lastName')
