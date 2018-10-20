@@ -24,6 +24,7 @@ console:
 	npm run gulp -- console
 
 build:
+	rm -rf dist
 	npm run build
 
 lint:

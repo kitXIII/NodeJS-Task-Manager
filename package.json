@@ -22,14 +22,14 @@
     "start": "gulp server",
     "eslint": "eslint",
     "webpack": "webpack",
-    "build": "npm run webpack -- -p --env production --progress",
+    "build": "npm run webpack -- -p --env production",
     "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kitXIII/project-lvl4-s311.git"
   },
-  "author": "Kirill Mokevnin",
+  "author": "Nikita Konovalov",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/kitXIII/project-lvl4-s311/issues"

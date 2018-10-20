@@ -1,8 +1,6 @@
-import path from 'path';
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import CleanWebpackPlugin from 'clean-webpack-plugin';
 
 const devMode = process.env.NODE_ENV !== 'production';
 
@@ -11,8 +9,6 @@ export default {
     main: './src/index.js',
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'js/[name].js',
     publicPath: '/assets/',
   },
   module: {
@@ -25,6 +21,7 @@ export default {
       {
         test: /\.min\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        // use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
@@ -33,13 +30,13 @@ export default {
           options: {
             name: '[name].[ext]',
             outputPath: 'fonts/',
-            publicPath: '../fonts/',
           },
         },
       },
       {
         test: /\.(sa|sc)ss$/,
         use: [
+          // 'style-loader',
           MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
@@ -61,7 +58,7 @@ export default {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: './css/[name].css',
+      filename: '[name].css',
     }),
     new webpack.ProvidePlugin({
       $: 'jquery',
@@ -69,7 +66,6 @@ export default {
       'window.jQuery': 'jquery',
       Popper: ['popper.js', 'default'],
     }),
-    new CleanWebpackPlugin(['dist']),
   ],
   devtool: devMode && 'eval-sourcemap',
 };
