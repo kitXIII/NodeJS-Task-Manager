@@ -74,7 +74,7 @@ export default () => {
   app.use(methodOverride((req) => {
     // return req?.body?._method;
     if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-      logger(`methodoverride: set method "${req.body._method}"`);
+      logger(`methodoverride: set method "${req.body._method}"`); // eslint-disable-line
       return req.body._method; // eslint-disable-line
     }
     logger('methodoverride: method not found');

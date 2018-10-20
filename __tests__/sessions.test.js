@@ -67,7 +67,7 @@ describe('Sessions requests', () => {
     const res = await request.agent(server)
       .post('/sessions')
       .send({ form: { email: 'impossible@user.mail', password: '1qwertY1' } });
-    expect(res).toHaveHTTPStatus(422);
+    expect(res).toHaveHTTPStatus(302);
   });
 
   afterEach((done) => {

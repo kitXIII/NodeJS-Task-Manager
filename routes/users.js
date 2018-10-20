@@ -20,8 +20,8 @@ const getUserById = async (id, ctx, logger) => {
   return user;
 };
 
-const throwIfNotOwnerLogged = (owner, ctx, logger) => {
-  logger('Users: check that logged in user data is requested');
+const isAuthorized = (owner, ctx, logger) => {
+  logger('Users: check that authorized user data is requested');
   if (!ctx.state.isSignedIn() || owner.id !== ctx.state.userId) {
     ctx.throw(401);
   }
@@ -77,12 +77,12 @@ export default (router, { logger }) => {
     })
     .get('editUser', '/users/:id/edit', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
-      throwIfNotOwnerLogged(user, ctx, logger);
+      isAuthorized(user, ctx, logger);
       ctx.render('users/edit', { f: buildFormObj(user) });
     })
     .patch('patchUser', '/users/:id', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
-      throwIfNotOwnerLogged(user, ctx, logger);
+      isAuthorized(user, ctx, logger);
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = getRequestBodyFormData(allowedFields, ctx);
       if (_.isEmpty(data)) {
@@ -105,13 +105,13 @@ export default (router, { logger }) => {
     })
     .get('editUserPassword', '/users/:id/password/edit', async (ctx) => {
       const owner = await getUserById(Number(ctx.params.id), ctx, logger);
-      throwIfNotOwnerLogged(owner, ctx, logger);
+      isAuthorized(owner, ctx, logger);
       const user = _.pick(owner, ['id']);
       ctx.render('users/password', { f: buildFormObj(user) });
     })
     .patch('patchUserPassword', '/users/:id/password', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
-      throwIfNotOwnerLogged(user, ctx, logger);
+      isAuthorized(user, ctx, logger);
       const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
       const data = getRequestBodyFormData(allowedFields, ctx);
       if (_.isEmpty(data)) {
@@ -146,7 +146,7 @@ export default (router, { logger }) => {
     })
     .delete('deleteUser', '/users/:id', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
-      throwIfNotOwnerLogged(user, ctx, logger);
+      isAuthorized(user, ctx, logger);
       logger(`Users: try to delete user with id: ${user.id}`);
       try {
         await user.destroy();

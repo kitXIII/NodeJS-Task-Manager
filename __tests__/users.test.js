@@ -379,7 +379,7 @@ describe('Users updade requests', () => {
     const res = await request.agent(server)
       .patch(`/users/${userFromDB.id}/password`)
       .set('Cookie', cookie)
-      .send({ form: { currentPassword, password: '12345abc', confirmPassword: '12345abc' } });
+      .send({ form: { currentPassword, password: '123abc', confirmPassword: '123abc' } });
     expect(res).toHaveHTTPStatus(422);
 
     const patchedUserFromDB = await User.findOne({
