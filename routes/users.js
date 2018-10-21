@@ -85,16 +85,14 @@ export default (router, { logger }) => {
       isAuthorized(user, ctx, logger);
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = getRequestBodyFormData(allowedFields, ctx);
-      if (_.isEmpty(data)) {
-        ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
-        ctx.redirect(router.url('user', user.id));
-        return;
-      }
       logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
       try {
-        await user.update({ ...data });
-        logger(`Users: patch user with id: ${user.id}, is OK`);
-        ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
+        const result = await user.update({ ...data });
+        logger(`Users: update user with id: ${user.id}, is OK`);
+        const flashMsg = _.isEmpty(result._changed) // eslint-disable-line
+          ? { message: 'There was nothing to change', type: 'secondary' }
+          : { message: 'Your data has been updated', type: 'success' };
+        ctx.flash.set(flashMsg);
         ctx.session.userName = user.firstName;
         ctx.redirect(router.url('user', user.id));
       } catch (err) {
