@@ -8,8 +8,8 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         is: {
-          args: /^[a-zA-Z _]{3,}$/,
-          msg: 'This field must contain at least 3 characters',
+          args: /^[a-zA-Z _]{1,}$/,
+          msg: 'This field must contain at least 1 characters',
         },
       },
     },

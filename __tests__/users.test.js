@@ -400,7 +400,7 @@ describe('Users updade requests', () => {
 describe('Users delete requests', () => {
   let server;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     server = app().listen();
   });
 
