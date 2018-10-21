@@ -17,6 +17,7 @@ start:
 	npm run start
 
 heroku-start:
+	db:migrate:undo:all
 	npm run sequelize db:migrate
 	npm run start
 
