@@ -20,16 +20,23 @@ export default (router, { logger }) => {
         },
       });
       if (user && user.passwordDigest === encrypt(password)) {
-        logger(`User with email ${email} logged in`);
         ctx.session.userId = user.id;
         ctx.session.userName = user.firstName;
+        logger(`User with email ${email} logged in`);
         ctx.flash.set({ message: `Hello, ${user.firstName}`, type: 'info' });
         ctx.redirect(router.url('root'));
         return;
       }
-      logger(`Email: ${email} or password were wrong`);
-      ctx.flash.set({ message: 'Email or password were wrong', type: 'warning' });
-      ctx.redirect('newSession');
+      const errors = [];
+      if (!user) {
+        errors.push({ message: 'Some problems with the entered Email', path: 'email' });
+        logger(`Email: ${email} wrong`);
+      } else {
+        errors.push({ message: 'Some problems with the entered password', path: 'password' });
+        logger('Pasworg wrong');
+      }
+      ctx.status = 422;
+      ctx.render('sessions/new', { f: buildFormObj({ email }, { errors }) });
     })
     .delete('session', '/sessions', (ctx) => {
       ctx.session = {};

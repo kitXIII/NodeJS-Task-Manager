@@ -18,12 +18,9 @@ describe('Sessions requests', () => {
   let server;
   let user;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     user = getFakeUser();
     await User.create(user);
-  });
-
-  beforeEach(() => {
     server = app().listen();
   });
 
@@ -67,7 +64,7 @@ describe('Sessions requests', () => {
     const res = await request.agent(server)
       .post('/sessions')
       .send({ form: { email: 'impossible@user.mail', password: '1qwertY1' } });
-    expect(res).toHaveHTTPStatus(302);
+    expect(res).toHaveHTTPStatus(422);
   });
 
   afterEach((done) => {
