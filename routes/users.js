@@ -2,6 +2,7 @@ import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
 import encrypt from '../lib/secure';
+import getBodyFormValues from '../lib/bodyFormValues';
 import db from '../models';
 
 const { User } = db;
@@ -26,12 +27,6 @@ const checkAuth = (owner, ctx, logger) => {
     ctx.throw(401);
   }
   logger('Users: OK');
-};
-
-const getRequestBodyFormData = (allowedFields, ctx) => {
-  const { form: rawData } = ctx.request.body;
-  const data = _.pickBy(_.pick(rawData, allowedFields), str => str);
-  return data;
 };
 
 export default (router, { logger }) => {
@@ -84,7 +79,7 @@ export default (router, { logger }) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
       checkAuth(user, ctx, logger);
       const allowedFields = ['firstName', 'lastName', 'email'];
-      const data = getRequestBodyFormData(allowedFields, ctx);
+      const data = getBodyFormValues(allowedFields, ctx);
       logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
       try {
         const result = await user.update({ ...data });
@@ -111,7 +106,7 @@ export default (router, { logger }) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
       checkAuth(user, ctx, logger);
       const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
-      const data = getRequestBodyFormData(allowedFields, ctx);
+      const data = getBodyFormValues(allowedFields, ctx);
       if (_.isEmpty(data)) {
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
         ctx.redirect(router.url('user', user.id));
@@ -153,7 +148,7 @@ export default (router, { logger }) => {
         ctx.flash.set({ message: 'Your user data has been completely deleted from the system. Farewell.', type: 'info' });
         ctx.redirect(router.url('root'));
       } catch (err) {
-        logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
+        logger(`Users: delete user with id: ${user.id} problem: ${err.message}`);
         ctx.status = 422;
         ctx.render('users/user', { user });
       }
