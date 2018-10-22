@@ -157,5 +157,8 @@ export default (router, { logger }) => {
         ctx.status = 422;
         ctx.render('users/user', { user });
       }
+    })
+    .all('/users', (ctx) => {
+      ctx.throw(404);
     });
 };

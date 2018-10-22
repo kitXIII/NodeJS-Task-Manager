@@ -42,5 +42,8 @@ export default (router, { logger }) => {
       ctx.session = {};
       ctx.flash.set({ message: 'Bye!', type: 'info' });
       ctx.redirect(router.url('root'));
+    })
+    .all('/sessions', (ctx) => {
+      ctx.throw(404);
     });
 };
