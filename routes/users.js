@@ -20,7 +20,7 @@ const getUserById = async (id, ctx, logger) => {
   return user;
 };
 
-const isAuthorized = (owner, ctx, logger) => {
+const checkAuth = (owner, ctx, logger) => {
   logger('Users: check that authorized user data is requested');
   if (!ctx.state.isSignedIn() || owner.id !== ctx.state.userId) {
     ctx.throw(401);
@@ -77,12 +77,12 @@ export default (router, { logger }) => {
     })
     .get('editUser', '/users/:id/edit', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
-      isAuthorized(user, ctx, logger);
+      checkAuth(user, ctx, logger);
       ctx.render('users/edit', { f: buildFormObj(user) });
     })
     .patch('patchUser', '/users/:id', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
-      isAuthorized(user, ctx, logger);
+      checkAuth(user, ctx, logger);
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = getRequestBodyFormData(allowedFields, ctx);
       logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
@@ -103,13 +103,13 @@ export default (router, { logger }) => {
     })
     .get('editUserPassword', '/users/:id/password/edit', async (ctx) => {
       const owner = await getUserById(Number(ctx.params.id), ctx, logger);
-      isAuthorized(owner, ctx, logger);
+      checkAuth(owner, ctx, logger);
       const user = _.pick(owner, ['id']);
       ctx.render('users/password', { f: buildFormObj(user) });
     })
     .patch('patchUserPassword', '/users/:id/password', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
-      isAuthorized(user, ctx, logger);
+      checkAuth(user, ctx, logger);
       const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
       const data = getRequestBodyFormData(allowedFields, ctx);
       if (_.isEmpty(data)) {
@@ -144,7 +144,7 @@ export default (router, { logger }) => {
     })
     .delete('deleteUser', '/users/:id', async (ctx) => {
       const user = await getUserById(Number(ctx.params.id), ctx, logger);
-      isAuthorized(user, ctx, logger);
+      checkAuth(user, ctx, logger);
       logger(`Users: try to delete user with id: ${user.id}`);
       try {
         await user.destroy();
