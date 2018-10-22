@@ -1,0 +1,15 @@
+extends ../layouts/application.pug
+
+block content
+  .row.justify-content-center
+    .card.col.mx-3.col-md-9.shadow-sm
+      .card-body
+        +formFor(f, { url: urlFor('statuses'), method: 'post' })
+          +input(f, 'name')
+          .form-group
+            a.btn.btn-info.mr-2(href=urlFor('statuses') data-tooltip='true' data-placement='bottom' title='Back') 
+              i.fas.fa-undo-alt
+              span.d-none.d-md-inline &nbsp Back 
+            button.btn.btn-success(type='submit' data-tooltip='true' data-placement='bottom' title='Apply changes')
+              span.d-none.d-md-inline Add &nbsp
+              i.fas.fa-arrow-right

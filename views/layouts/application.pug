@@ -24,6 +24,14 @@ html(lang='en')
             a.nav-link.transition(href=urlFor('users')) 
               i.fas.fa-user-friends.mr-1
               | Users
+          li.nav-item
+            a.nav-link.transition(href=urlFor('root')) 
+              i.fas.fa-tasks.mr-1
+              | Tasks
+          li.nav-item
+            a.nav-link.transition(href=urlFor('statuses')) 
+              i.fas.fa-exchange-alt.mr-1
+              | Statuses
         .divider.d-md-none
         ul.navbar-nav.align-items-md-center.flex-md-row
           if isSignedIn()
