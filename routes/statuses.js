@@ -3,7 +3,7 @@ import buildFormObj from '../lib/formObjectBuilder';
 import getBodyFormValues from '../lib/bodyFormValues';
 import db from '../models';
 
-const { taskStatus } = db;
+const { TaskStatus } = db;
 
 const checkAuth = (ctx, logger) => {
   if (!ctx.state.isSignedIn()) {
@@ -15,7 +15,7 @@ const checkAuth = (ctx, logger) => {
 
 const getStatusById = async (id, ctx, logger) => {
   logger(`c: getting satatus with id: ${id} from DB`);
-  const status = await taskStatus.findOne({
+  const status = await TaskStatus.findOne({
     where: {
       id,
     },
@@ -31,20 +31,20 @@ export default (router, { logger }) => {
   router
     .get('statuses', '/statuses', async (ctx) => {
       logger('Statuses: try to get statuses list');
-      const statuses = await taskStatus.findAll();
+      const statuses = await TaskStatus.findAll();
       logger('Statuses: statuses list success');
       ctx.render('statuses', { statuses });
     })
     .get('newStatus', '/statuses/new', (ctx) => {
       logger('Statuses: prepare data for new status form');
-      const status = taskStatus.build();
+      const status = TaskStatus.build();
       ctx.render('statuses/new', { f: buildFormObj(status) });
     })
     .post('statuses', '/statuses', async (ctx) => {
       checkAuth(ctx, logger);
       const { form } = ctx.request.body;
       logger(`Statuses: got new tasks status data: ${form.name}`);
-      const status = taskStatus.build(form);
+      const status = TaskStatus.build(form);
       try {
         await status.validate();
         logger('Statuses: validation success');

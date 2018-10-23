@@ -1,7 +1,7 @@
 import formatDate from '../lib/formatDate';
 
 module.exports = (sequelize, DataTypes) => {
-  const taskStatus = sequelize.define('taskStatus', {
+  const taskStatus = sequelize.define('TaskStatus', {
     name: {
       type: DataTypes.STRING,
       allowNull: false,

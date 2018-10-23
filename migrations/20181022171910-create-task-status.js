@@ -1,5 +1,5 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('taskStatuses', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('TaskStatuses', {
     id: {
       allowNull: false,
       autoIncrement: true,

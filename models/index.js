@@ -2,11 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
 import confFromFile from '../config/config.json';
-// import container from '../container';
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-// const { logger } = container;
 const config = confFromFile[env];
 const db = {};
 
