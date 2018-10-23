@@ -14,14 +14,10 @@ const checkAuth = (ctx, logger) => {
 };
 
 const getStatusById = async (id, ctx, logger) => {
-  logger(`c: getting satatus with id: ${id} from DB`);
-  const status = await TaskStatus.findOne({
-    where: {
-      id,
-    },
-  });
+  logger(`Statuses: getting satatus with id: ${id} from DB`);
+  const status = await TaskStatus.findById(id);
   if (!status) {
-    logger(`Status with id: ${id} not found`);
+    logger(`Statuses: status with id: ${id} not found`);
     ctx.throw(404);
   }
   return status;

@@ -9,11 +9,7 @@ const { User } = db;
 
 const getUserById = async (id, ctx, logger) => {
   logger(`Users: getting user with id: ${id} from DB`);
-  const user = await User.findOne({
-    where: {
-      id,
-    },
-  });
+  const user = await User.findById(id);
   if (!user) {
     logger(`User with userId: ${id} not found`);
     ctx.throw(404);
