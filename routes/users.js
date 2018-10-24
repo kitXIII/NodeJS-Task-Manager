@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
+import hasChanges from '../lib/hasChanges';
 import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
 import encrypt from '../lib/secure';
 import getBodyFormValues from '../lib/bodyFormValues';
@@ -9,7 +10,7 @@ const { User } = db;
 
 const getUserById = async (id, ctx, logger) => {
   logger(`Users: getting user with id: ${id} from DB`);
-  const user = await User.findById(id);
+  const user = await User.findById(Number(id));
   if (!user) {
     logger(`User with userId: ${id} not found`);
     ctx.throw(404);
@@ -67,23 +68,26 @@ export default (router, { logger }) => {
       ctx.render('users/user', { user });
     })
     .get('editUser', '/users/:id/edit', async (ctx) => {
-      const user = await getUserById(Number(ctx.params.id), ctx, logger);
+      const user = await getUserById(ctx.params.id, ctx, logger);
       checkAuth(user, ctx, logger);
       ctx.render('users/edit', { f: buildFormObj(user) });
     })
     .patch('patchUser', '/users/:id', async (ctx) => {
-      const user = await getUserById(Number(ctx.params.id), ctx, logger);
+      const user = await getUserById(ctx.params.id, ctx, logger);
       checkAuth(user, ctx, logger);
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = getBodyFormValues(allowedFields, ctx);
+      if (!hasChanges(data, user)) {
+        logger(`Users: There was nothing to change user with id: ${user.id}`);
+        ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
+        ctx.redirect(router.url('user', user.id));
+        return;
+      }
       logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
       try {
-        const result = await user.update({ ...data });
+        await user.update({ ...data });
         logger(`Users: update user with id: ${user.id}, is OK`);
-        const flashMsg = _.isEmpty(result._changed) // eslint-disable-line
-          ? { message: 'There was nothing to change', type: 'secondary' }
-          : { message: 'Your data has been updated', type: 'success' };
-        ctx.flash.set(flashMsg);
+        ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
         ctx.session.userName = user.firstName;
         ctx.redirect(router.url('user', user.id));
       } catch (err) {
@@ -93,13 +97,13 @@ export default (router, { logger }) => {
       }
     })
     .get('editUserPassword', '/users/:id/password/edit', async (ctx) => {
-      const owner = await getUserById(Number(ctx.params.id), ctx, logger);
+      const owner = await getUserById(ctx.params.id, ctx, logger);
       checkAuth(owner, ctx, logger);
       const user = _.pick(owner, ['id']);
       ctx.render('users/password', { f: buildFormObj(user) });
     })
     .patch('patchUserPassword', '/users/:id/password', async (ctx) => {
-      const user = await getUserById(Number(ctx.params.id), ctx, logger);
+      const user = await getUserById(ctx.params.id, ctx, logger);
       checkAuth(user, ctx, logger);
       const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
       const data = getBodyFormValues(allowedFields, ctx);
@@ -134,7 +138,7 @@ export default (router, { logger }) => {
       }
     })
     .delete('deleteUser', '/users/:id', async (ctx) => {
-      const user = await getUserById(Number(ctx.params.id), ctx, logger);
+      const user = await getUserById(ctx.params.id, ctx, logger);
       checkAuth(user, ctx, logger);
       logger(`Users: try to delete user with id: ${user.id}`);
       try {

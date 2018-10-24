@@ -1,6 +1,6 @@
-import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import getBodyFormValues from '../lib/bodyFormValues';
+import hasChanges from '../lib/hasChanges';
 import db from '../models';
 
 const { TaskStatus } = db;
@@ -61,16 +61,18 @@ export default (router, { logger }) => {
     .patch('patchStatus', '/statuses/:id', async (ctx) => {
       const status = await getStatusById(Number(ctx.params.id), ctx, logger);
       checkAuth(ctx, logger);
-      const allowedFields = ['name'];
-      const data = getBodyFormValues(allowedFields, ctx);
+      const data = getBodyFormValues(['name'], ctx);
+      if (!hasChanges(data, status)) {
+        logger(`Statuses: There was nothing to change satatus with id: ${status.id}`);
+        ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
+        ctx.redirect(router.url('statuses'));
+        return;
+      }
       logger(`Statuses: try to update: ${data.name}`);
       try {
-        const result = await status.update({ ...data });
+        await status.update({ ...data });
         logger(`Statuses: update status with id: ${status.id}, is OK`);
-        const flashMsg = _.isEmpty(result._changed) // eslint-disable-line
-          ? { message: 'There was nothing to change', type: 'secondary' }
-          : { message: 'Your data has been updated', type: 'success' };
-        ctx.flash.set(flashMsg);
+        ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
         ctx.redirect(router.url('statuses'));
       } catch (err) {
         logger(`Statuses: patch status with id: ${status.id}, problem: ${err.message}`);
