@@ -86,7 +86,7 @@ export default (router, { logger }) => {
       logger(`Statuses: try to delete status with id: ${status.id}`);
       try {
         await status.destroy();
-        const message = `Status ${status.name} was deleted`;
+        const message = `Status ${status.name} was removed`;
         logger(message);
         ctx.flash.set({ message, type: 'info' });
         ctx.redirect(router.url('statuses'));
