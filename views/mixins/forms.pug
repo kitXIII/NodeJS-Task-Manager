@@ -27,3 +27,25 @@ mixin button(f, options = {})
   .form-group
     input(class=`btn ${_.isArray(classList) ? classList.join(' ') : classList}` type=`${type}` value=`${value}`)
 
+mixin select(f, property, options = { list: [] })
+  - const value = f.object[property] === undefined ? '' : f.object[property]
+  .form-group(class=(f.errors[property] && 'has-danger'))
+    - const preparedLabel = `${_.upperFirst(_.lowerCase(property)).split(' ').filter(i => i !== 'id').join(' ')}:`
+    label= preparedLabel
+    select.custom-select(name=getInputName(f, property))
+      each option in options['list']
+        if option.selected
+          option(value=option.id selected)= option.name
+        else
+          option(value=option.id)= option.name
+    if f.errors[property]
+      .form-control-feedback= f.errors[property].map(({ message }) => message).join('. ')
+
+mixin textarea(f, property, options = { rows: 3 })
+  - const value = f.object[property] === undefined ? '' : f.object[property]
+  .form-group(class=(f.errors[property] && 'has-danger'))
+    - const preparedLabel = `${_.upperFirst(_.lowerCase(property))}:`
+    label= preparedLabel
+    textarea(name=getInputName(f, property) class='form-control' rows=options['rows'])= value
+    if f.errors[property]
+      .form-control-feedback= f.errors[property].map(({ message }) => message).join('. ')

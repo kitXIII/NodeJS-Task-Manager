@@ -20,18 +20,18 @@ block content
           td
             a.text-success.mr-3(href=urlFor('task', task.id) data-tooltip='true' data-placement='bottom' title='View task')
               i.far.fa-eye
-            if isSignedIn()
-              a.text-info.mr-3(href=urlFor('editTask', task.id) data-tooltip='true' data-placement='bottom' title='Edit task')
-                i.fas.fa-pen
-              a.text-danger(data-toggle='modal' data-target=`#deleteTaskModal${task.id}` data-tooltip='true'  data-placement='bottom' title='Delete task')
-                i.fas.fa-trash-alt
-              +deletionModal({ 
-                id:`deleteTaskModal${task.id}`,
-                message: `Are you sure you want to delete task ${task.name}?`,
-                link: urlFor('deleteTask', task.id),
-              })
-  if isSignedIn()
-    .d-flex
-      a.btn.btn-success(href=urlFor('newTask') data-tooltip='true' data-placement='bottom' title='Add new task')
-        span.d-none.d-md-inline Add &nbsp
-        i.fas.fa-plus
+            //- if isSignedIn()
+            a.text-info.mr-3(href=urlFor('editTask', task.id) data-tooltip='true' data-placement='bottom' title='Edit task')
+              i.fas.fa-pen
+            a.text-danger(data-toggle='modal' data-target=`#deleteTaskModal${task.id}` data-tooltip='true' data-placement='bottom' title='Delete task')
+              i.fas.fa-trash-alt
+            +deletionModal({ 
+              id:`deleteTaskModal${task.id}`,
+              message: `Are you sure you want to delete task ${task.name}?`,
+              link: urlFor('deleteTask', task.id),
+            })
+  //- if isSignedIn()
+  .d-flex
+    a.btn.btn-success(href=urlFor('newTask') data-tooltip='true' data-placement='bottom' title='Add new task')
+      span.d-none.d-md-inline Add &nbsp
+      i.fas.fa-plus

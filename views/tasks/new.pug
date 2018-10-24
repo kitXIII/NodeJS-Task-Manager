@@ -1,0 +1,17 @@
+extends ../layouts/application.pug
+
+block content
+  .row.justify-content-center
+    .card.col.mx-3.col-md-9.shadow-sm
+      .card-body
+        +formFor(f, { url: urlFor('tasks'), method: 'post' })
+          +input(f, 'name')
+          +textarea(f, 'description')
+          +select(f, 'taskStatusId', { list: statusList })
+          .form-group
+            a.btn.btn-info.mr-2(href=urlFor('tasks') data-tooltip='true' data-placement='bottom' title='Back') 
+              i.fas.fa-undo-alt
+              span.d-none.d-md-inline &nbsp Back 
+            button.btn.btn-success(type='submit' data-tooltip='true' data-placement='bottom' title='Add new task')
+              span.d-none.d-md-inline Add &nbsp
+              i.fas.fa-arrow-right
