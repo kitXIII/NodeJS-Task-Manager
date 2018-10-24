@@ -1,10 +1,11 @@
 extends ../layouts/application.pug
+include ../mixins/deletionModal.pug
 
 block content
   table.table.table-stripped
     thead
       tr
-        th Id
+        th #
         th Name
         th Status
         th Updated
@@ -14,31 +15,23 @@ block content
         tr
           td= task.id
           td= task.name
-          td= task.taskStatus
+          td= task.taskStatus.name
           td= task.updated
           td
-            a.text-info.mr-3(href=urlFor('editTask', task.id) data-tooltip='true' data-placement='bottom' title='Edit task')
-              i.fas.fa-pen
-            a.text-danger(data-toggle='modal' data-target=`#deleteTaskModal${task.id}` data-tooltip='true' data-placement='bottom' title='Delete task')
-              i.fas.fa-trash-alt
-            .modal.fade(id=`deleteTaskModal${task.id}` tabindex='-1')
-              .modal-dialog
-                .modal-content
-                  .modal-header
-                    h5#deleteUserModalLabel.modal-title Attention!
-                    button.close(type='button' data-dismiss='modal')
-                      span &times
-                  .modal-body
-                    | Are you sure you want to delete task &nbsp
-                    = task.name
-                    | ?
-                  .modal-footer
-                    button.btn.btn-secondary(type='button' data-dismiss='modal') Close
-                    a.btn.btn-danger(href=urlFor('deleteTask', task.id) data-method='delete')
-                      span.d-none.d-md-inline Yes? I am sure &nbsp
-                      i.fas.fa-trash-alt
-            
-  .d-flex
-    a.btn.btn-success(href=urlFor('newTask') data-tooltip='true' data-placement='bottom' title='Add new task')
-      span.d-none.d-md-inline Add &nbsp
-      i.fas.fa-plus
+            a.text-success.mr-3(href=urlFor('task', task.id) data-tooltip='true' data-placement='bottom' title='View task')
+              i.far.fa-eye
+            if isSignedIn()
+              a.text-info.mr-3(href=urlFor('editTask', task.id) data-tooltip='true' data-placement='bottom' title='Edit task')
+                i.fas.fa-pen
+              a.text-danger(data-toggle='modal' data-target=`#deleteTaskModal${task.id}` data-tooltip='true'  data-placement='bottom' title='Delete task')
+                i.fas.fa-trash-alt
+              +deletionModal({ 
+                id:`deleteTaskModal${task.id}`,
+                message: `Are you sure you want to delete task ${task.name}?`,
+                link: urlFor('deleteTask', task.id),
+              })
+  if isSignedIn()
+    .d-flex
+      a.btn.btn-success(href=urlFor('newTask') data-tooltip='true' data-placement='bottom' title='Add new task')
+        span.d-none.d-md-inline Add &nbsp
+        i.fas.fa-plus

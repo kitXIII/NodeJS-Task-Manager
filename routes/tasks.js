@@ -15,7 +15,7 @@ const checkAuth = (ctx, logger) => {
 
 const getTaskById = async (id, ctx, logger) => {
   logger(`Tasks: getting satatus with id: ${id} from DB`);
-  const task = await Task.findById(id);
+  const task = await Task.findById(id, { include: ['taskStatus'] });
   if (!task) {
     logger(`Tasks: task with id: ${id} not found`);
     ctx.throw(404);
@@ -27,10 +27,15 @@ export default (router, { logger }) => {
   router
     .get('tasks', '/tasks', async (ctx) => {
       logger('Tasks: try to get tasks list');
-      const tasks = await Task.findAll();
-      console.log(tasks);
+      const tasks = await Task.findAll({ include: ['taskStatus'] });
+      console.log(tasks[0]);
       logger('Tasks: tasks list success');
       ctx.render('tasks', { tasks });
+    })
+    .get('task', '/tasks/:id', async (ctx) => {
+      const task = await getTaskById(Number(ctx.params.id), ctx, logger);
+      logger('Users: user data prepared to view');
+      ctx.render('tasks/task', { task });
     })
     .get('newTask', '/tasks/new', (ctx) => {
       logger('Tasks: prepare data for new task form');

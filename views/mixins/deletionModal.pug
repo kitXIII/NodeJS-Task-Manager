@@ -1,0 +1,19 @@
+mixin deletionModal(options = {})
+  - const headerTitle = _.get(options, 'headerTitle', 'Attention!')
+  - const message = _.get(options, 'message', 'Are you sure?');
+  - const id = _.get(options, 'id')
+  - const link = _.get(options, 'link')
+  .modal.fade(id= id tabindex='-1')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title= headerTitle
+          button.close(type='button' data-dismiss='modal')
+            span &times
+        .modal-body
+          .p= message
+        .modal-footer
+          button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+          a.btn.btn-danger(href= link data-method='delete')
+            span.d-none.d-md-inline Yes? I am sure &nbsp
+            i.fas.fa-trash-alt

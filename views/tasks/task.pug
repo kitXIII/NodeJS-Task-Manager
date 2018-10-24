@@ -1,0 +1,45 @@
+extends ../layouts/application.pug
+include ../mixins/deletionModal.pug
+
+block content
+  table.table.table-stripped
+    tbody
+      tr
+        td
+          strong #
+        td= task.id
+      tr
+        td
+          strong Name
+        td= task.name
+      tr
+        td
+          strong Description
+        td= task.description
+      tr
+        td
+          strong Status
+        td= task.taskStatus.name
+      tr
+        td 
+          strong Created at
+        td= task.created
+      tr
+        td 
+          strong Updated at
+        td= task.updated
+      
+  if isSignedIn()
+    .d-flex
+      a.btn.btn-info.mr-2(href=urlFor('editTask', task.id) data-tooltip='true' data-placement='bottom' title='Edit')
+        span.d-none.d-md-inline Edit &nbsp
+        i.fas.fa-pen
+      button.btn.btn-danger(type='button' data-toggle='modal' data-target=`#deleteTaskModal${task.id}` data-tooltip='true' data-placement='bottom' title='Remove task')
+        span.d-none.d-md-inline Remove task &nbsp
+        i.fas.fa-trash-alt
+    | <!-- Modal -->
+    +deletionModal({ 
+      id:`deleteTaskModal${task.id}`,
+      message: `Are you sure you want to delete task ${task.name}?`,
+      link: urlFor('deleteTask', task.id),
+    })
