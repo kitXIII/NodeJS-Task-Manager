@@ -1,4 +1,4 @@
-import formatDate from '../lib/formatDate';
+import formatDate from '../lib/dateFormatter';
 
 module.exports = (sequelize, DataTypes) => {
   const taskStatus = sequelize.define('TaskStatus', {
@@ -20,8 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
   });
-  // taskStatus.associate = function(models) {
-  //   // associations can be defined here
-  // };
+
   return taskStatus;
 };

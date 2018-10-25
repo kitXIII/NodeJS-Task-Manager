@@ -23,6 +23,26 @@ module.exports = {
       onDelete: 'RESTRICT',
       allowNull: false,
     },
+    creatorId: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'Users',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+      allowNull: true,
+    },
+    assignedToId: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'Users',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT',
+      allowNull: false,
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE,

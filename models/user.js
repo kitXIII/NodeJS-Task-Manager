@@ -1,5 +1,5 @@
 import encrypt from '../lib/secure';
-import formatDate from '../lib/formatDate';
+import formatDate from '../lib/dateFormatter';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -50,13 +50,18 @@ export default (sequelize, DataTypes) => {
       fullName() {
         return `${this.firstName} ${this.lastName}`;
       },
+      nameWithEmail() {
+        return `${this.firstName} ${this.lastName} (${this.email})`;
+      },
       created() {
         return formatDate(this.createdAt);
       },
-      // associate(models) {
-      //   // associations can be defined here
-      // },
     },
   });
+
+  User.associate = (models) => {
+    User.hasMany(models.Task, { as: 'InitializedTask', foreignKey: 'creatorId' });
+    User.hasMany(models.Task, { as: 'Task', foreignKey: 'assignedToId' });
+  };
   return User;
 };
