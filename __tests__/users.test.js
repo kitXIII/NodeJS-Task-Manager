@@ -217,7 +217,6 @@ describe('Users get change password form', () => {
   });
 });
 
-
 describe('Users updade requests', () => {
   let server;
   let user;
@@ -258,25 +257,6 @@ describe('Users updade requests', () => {
     expect(patchedUserFromDB.lastName).toBe(lastName);
     expect(patchedUserFromDB.passwordDigest).toBe(userFromDB.passwordDigest);
     expect(patchedUserFromDB.email).toBe(userFromDB.email);
-  });
-
-  it('PATCH /users/:id (firstName as empty string)', async () => {
-    const { lastName } = getFakeUser();
-
-    const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}`)
-      .set('Cookie', cookie)
-      .send({ form: { firstName: '', lastName } });
-    expect(res).toHaveHTTPStatus(302);
-
-    const patchedUserFromDB = await User.findOne({
-      where: {
-        email: user.email,
-      },
-    });
-
-    expect(patchedUserFromDB.firstName).toBe(userFromDB.firstName);
-    expect(patchedUserFromDB.lastName).toBe(lastName);
   });
 
   it('PATCH /users/:id (email)', async () => {
@@ -389,6 +369,25 @@ describe('Users updade requests', () => {
     });
 
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
+  });
+
+  it('PATCH /users/:id (fail where form data is not valid: firstName is empty string)', async () => {
+    const { lastName } = getFakeUser();
+
+    const res = await request.agent(server)
+      .patch(`/users/${userFromDB.id}`)
+      .set('Cookie', cookie)
+      .send({ form: { firstName: '', lastName } });
+    expect(res).toHaveHTTPStatus(422);
+
+    const patchedUserFromDB = await User.findOne({
+      where: {
+        email: user.email,
+      },
+    });
+
+    expect(patchedUserFromDB.firstName).toBe(userFromDB.firstName);
+    expect(patchedUserFromDB.lastName).toBe(userFromDB.lastName);
   });
 
   afterEach((done) => {
