@@ -1,48 +1,17 @@
 import buildFormObj from '../lib/formObjectBuilder';
-import getBodyFormValues from '../lib/bodyFormValues';
-import hasChanges from '../lib/hasChanges';
+import pickFormValues from '../lib/bodyFormPicker';
+import hasChanges from '../lib/changesQualifier';
+import buildList from '../lib/selectionListBuilder';
+import { checkAuth, isValidId, getTaskById, getUserById } from './helpers'; //eslint-disable-line
 import db from '../models';
 
-const { Task, TaskStatus } = db;
-
-const checkAuth = (ctx, logger) => {
-  if (!ctx.state.isSignedIn()) {
-    logger('Tasks: post /tasks is unauthorized');
-    ctx.throw(401);
-  }
-  logger('Tasks: OK');
-};
-
-const getTaskById = async (id, ctx, logger) => {
-  logger(`Tasks: getting satatus with id: ${id} from DB`);
-  const task = await Task.findById(Number(id), { include: ['taskStatus'] });
-  if (!task) {
-    logger(`Tasks: task with id: ${id} not found`);
-    ctx.throw(404);
-  }
-  return task;
-};
-
-const isValidTaskStatusId = async (id, ctx, logger) => {
-  const status = await TaskStatus.findById(Number(id));
-  if (!status) {
-    logger(`Tasks: status with id: ${id} not found`);
-    ctx.throw(404);
-  }
-  return true;
-};
-
-const prepareStatusList = (statusList, selectedId) => {
-  const baseId = selectedId ? Number(selectedId) : 1;
-  return statusList
-    .map(({ id, name }) => (id === baseId ? { id, name, selected: true } : { id, name }));
-};
+const { Task, TaskStatus, User } = db;
 
 export default (router, { logger }) => {
   router
     .get('tasks', '/tasks', async (ctx) => {
       logger('Tasks: try to get tasks list');
-      const tasks = await Task.findAll({ include: ['taskStatus'] });
+      const tasks = await Task.findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
       logger('Tasks: tasks list success');
       ctx.render('tasks', { tasks });
     })
@@ -50,8 +19,10 @@ export default (router, { logger }) => {
       logger('Tasks: prepare data for new task form');
       const task = Task.build();
       const taskStatuses = await TaskStatus.findAll();
-      const statusList = prepareStatusList(taskStatuses);
-      ctx.render('tasks/new', { f: buildFormObj(task), statusList });
+      const statusList = buildList.status(taskStatuses);
+      const users = await User.findAll();
+      const userList = buildList.user(users, ctx.state.userId, 'nameWithEmail');
+      ctx.render('tasks/new', { f: buildFormObj(task), statusList, userList });
     })
     .get('task', '/tasks/:id', async (ctx) => {
       const task = await getTaskById(ctx.params.id, ctx, logger);
@@ -59,38 +30,38 @@ export default (router, { logger }) => {
       ctx.render('tasks/task', { task });
     })
     .post('tasks', '/tasks', async (ctx) => {
-      // checkAuth(ctx, logger);
+      checkAuth(ctx, logger);
       const { form } = ctx.request.body;
       logger('Tasks: got new task data');
-      const task = Task.build(form);
-      await isValidTaskStatusId(form.taskStatusId, ctx, logger);
-      const taskStatuses = await TaskStatus.findAll();
-      const statusList = prepareStatusList(taskStatuses, form.taskStatusId);
+      const user = await getUserById(ctx.state.userId, ctx, logger);
+      await isValidId(form.taskStatusId, TaskStatus, ctx, logger);
+      await isValidId(form.assignedToId, User, ctx, logger);
+      const statusList = buildList.status(await TaskStatus.findAll(), form.taskStatusId);
+      const userList = buildList.user(await User.findAll(), form.assignedToId, 'nameWithEmail');
       logger('Tasks: try to validate new task data');
       try {
-        await task.validate();
-        logger('Tasks: validation success');
-        await task.save();
-        logger('Tasks: new satus has been created');
+        const task = await user.createInitializedTask(form);
+        logger(`Tasks: new task ${task.name} has been created`);
         ctx.flash.set({ message: `Task ${task.name} has been created`, type: 'success' });
         ctx.redirect(router.url('tasks'));
       } catch (err) {
         ctx.status = 422;
-        ctx.render('tasks/new', { f: buildFormObj(task, err), statusList });
+        logger(`Tasks fial on task creation: ${err.message}`);
+        ctx.render('tasks/new', { f: buildFormObj(form, err), statusList, userList });
       }
     })
     .get('editTask', '/tasks/:id/edit', async (ctx) => {
       const task = await getTaskById(ctx.params.id, ctx, logger);
       // checkAuth(ctx, logger);
       const taskStatuses = await TaskStatus.findAll();
-      const statusList = prepareStatusList(taskStatuses, task.taskStatusId);
+      const statusList = buildList.status(taskStatuses, task.taskStatusId);
       ctx.render('tasks/edit', { f: buildFormObj(task), statusList });
     })
     .patch('patchTask', '/tasks/:id', async (ctx) => {
       const task = await getTaskById(ctx.params.id, ctx, logger);
       // checkAuth(ctx, logger);
-      const allowedFields = ['name', 'description', 'taskStatusId'];
-      const data = getBodyFormValues(allowedFields, ctx);
+      const allowedFields = ['name', 'description', 'taskStatusId', 'assignedToId'];
+      const data = pickFormValues(allowedFields, ctx);
       if (!hasChanges(data, task)) {
         logger(`Tasks: There was nothing to change task with id: ${task.id}`);
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
@@ -98,10 +69,10 @@ export default (router, { logger }) => {
         return;
       }
       if (data.taskStatusId) {
-        await isValidTaskStatusId(data.taskStatusId, ctx, logger);
+        await isValidId(data.taskStatusId, TaskStatus, ctx, logger);
       }
       const taskStatuses = await TaskStatus.findAll();
-      const statusList = prepareStatusList(taskStatuses, data.taskStatusId || task.taskStatusId);
+      const statusList = buildList.status(taskStatuses, data.taskStatusId || task.taskStatusId);
       logger(`Tasks: try to update task with id: ${task.id}`);
       try {
         await task.update({ ...data });

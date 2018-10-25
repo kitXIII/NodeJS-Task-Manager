@@ -21,6 +21,14 @@ block content
           strong Status
         td= task.taskStatus.name
       tr
+        td
+          strong Creator
+        td= task.creator.fullName
+      tr
+        td
+          strong Assigned to
+        td= task.assignedTo.fullName
+      tr
         td 
           strong Created at
         td= task.created

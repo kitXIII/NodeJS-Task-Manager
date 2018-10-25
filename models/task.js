@@ -1,4 +1,4 @@
-import formatDate from '../lib/formatDate';
+import formatDate from '../lib/dateFormatter';
 
 module.exports = (sequelize, DataTypes) => {
   const Task = sequelize.define('Task', {
@@ -26,13 +26,9 @@ module.exports = (sequelize, DataTypes) => {
 
   Task.associate = (models) => {
     Task.belongsTo(models.TaskStatus, { as: 'taskStatus', foreignKey: 'taskStatusId' });
+    Task.belongsTo(models.User, { as: 'creator', foreignKey: 'creatorId' });
+    Task.belongsTo(models.User, { as: 'assignedTo', foreignKey: 'assignedToId' });
   };
-
-  // Task.addScope('taskStatus', {
-  //   include: [
-  //     { model: sequelize.TaskStatus, where: { id: Task.taskStatusId } },
-  //   ],
-  // });
 
   return Task;
 };

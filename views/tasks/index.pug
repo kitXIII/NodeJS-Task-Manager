@@ -8,6 +8,8 @@ block content
         th #
         th Name
         th Status
+        th Creator
+        th Assigned to
         th Updated
         th
     tbody
@@ -16,6 +18,8 @@ block content
           td= task.id
           td= task.name
           td= task.taskStatus.name
+          td= task.creator.fullName
+          td= task.assignedTo.fullName
           td= task.updated
           td
             a.text-success.mr-3(href=urlFor('task', task.id) data-tooltip='true' data-placement='bottom' title='View task')
