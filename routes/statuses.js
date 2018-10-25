@@ -1,32 +1,14 @@
 import buildFormObj from '../lib/formObjectBuilder';
-import getBodyFormValues from '../lib/bodyFormValues';
-import hasChanges from '../lib/hasChanges';
+import pickFormValues from '../lib/bodyFormPicker';
+import hasChanges from '../lib/changesQualifier';
+import { getStatusById, checkAuth } from './helpers';
 import db from '../models';
 
 const { TaskStatus } = db;
 
-const checkAuth = (ctx, logger) => {
-  if (!ctx.state.isSignedIn()) {
-    logger('Statuses: post /statuses is unauthorized');
-    ctx.throw(401);
-  }
-  logger('Statuses: OK');
-};
-
-const getStatusById = async (id, ctx, logger) => {
-  logger(`Statuses: getting satatus with id: ${id} from DB`);
-  const status = await TaskStatus.findById(id);
-  if (!status) {
-    logger(`Statuses: status with id: ${id} not found`);
-    ctx.throw(404);
-  }
-  return status;
-};
-
 export default (router, { logger }) => {
   router
     .get('statuses', '/statuses', async (ctx) => {
-      logger('Statuses: try to get statuses list');
       const statuses = await TaskStatus.findAll();
       logger('Statuses: statuses list success');
       ctx.render('statuses', { statuses });
@@ -61,7 +43,7 @@ export default (router, { logger }) => {
     .patch('patchStatus', '/statuses/:id', async (ctx) => {
       const status = await getStatusById(Number(ctx.params.id), ctx, logger);
       checkAuth(ctx, logger);
-      const data = getBodyFormValues(['name'], ctx);
+      const data = pickFormValues(['name'], ctx);
       if (!hasChanges(data, status)) {
         logger(`Statuses: There was nothing to change satatus with id: ${status.id}`);
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });

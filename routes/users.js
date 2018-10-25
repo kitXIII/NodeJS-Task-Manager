@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
-import hasChanges from '../lib/hasChanges';
+import hasChanges from '../lib/changesQualifier';
 import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
 import encrypt from '../lib/secure';
-import getBodyFormValues from '../lib/bodyFormValues';
+import pickFormValues from '../lib/bodyFormPicker';
 import db from '../models';
 
 const { User } = db;
@@ -76,7 +76,7 @@ export default (router, { logger }) => {
       const user = await getUserById(ctx.params.id, ctx, logger);
       checkAuth(user, ctx, logger);
       const allowedFields = ['firstName', 'lastName', 'email'];
-      const data = getBodyFormValues(allowedFields, ctx);
+      const data = pickFormValues(allowedFields, ctx);
       if (!hasChanges(data, user)) {
         logger(`Users: There was nothing to change user with id: ${user.id}`);
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
@@ -106,7 +106,7 @@ export default (router, { logger }) => {
       const user = await getUserById(ctx.params.id, ctx, logger);
       checkAuth(user, ctx, logger);
       const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
-      const data = getBodyFormValues(allowedFields, ctx);
+      const data = pickFormValues(allowedFields, ctx);
       if (_.isEmpty(data)) {
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
         ctx.redirect(router.url('user', user.id));
@@ -149,8 +149,8 @@ export default (router, { logger }) => {
         ctx.redirect(router.url('root'));
       } catch (err) {
         logger(`Users: delete user with id: ${user.id} problem: ${err.message}`);
-        ctx.status = 422;
-        ctx.render('users/user', { user });
+        ctx.flash.set({ message: `Unable to delete user ${user.fullName}`, type: 'warning' });
+        ctx.redirect(router.url('user', user.id));
       }
     })
     .all('/users', (ctx) => {
