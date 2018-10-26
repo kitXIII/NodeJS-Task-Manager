@@ -11,3 +11,8 @@ export const getFakeUser = () => ({
 });
 
 export const getFakeStatus = () => ({ name: faker.random.words() });
+
+export const getFakeTaskParts = () => ({
+  name: faker.random.words(),
+  description: faker.random.words(),
+});

@@ -1,6 +1,5 @@
 import buildFormObj from '../lib/formObjectBuilder';
-import pickFormValues from '../lib/bodyFormPicker';
-import hasChanges from '../lib/changesQualifier';
+import { hasChanges, pickFormValues } from '../lib/helpers';
 import { getStatusById, checkSession } from './helpers';
 import db from '../models';
 

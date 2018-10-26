@@ -1,9 +1,8 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
-import hasChanges from '../lib/changesQualifier';
+import { hasChanges, pickFormValues } from '../lib/helpers';
 import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
 import encrypt from '../lib/secure';
-import pickFormValues from '../lib/bodyFormPicker';
 import { checkAuth, getUserById } from './helpers';
 import db from '../models';
 

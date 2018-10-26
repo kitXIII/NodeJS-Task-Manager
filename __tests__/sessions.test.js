@@ -4,10 +4,9 @@ import matchers from 'jest-supertest-matchers';
 import app from '..';
 import db from '../models';
 
-import getFakeUser from './lib/helpers';
+import { getFakeUser } from './lib/helpers';
 
 const { sequelize, User } = db;
-
 
 beforeAll(async () => {
   await sequelize.sync({ force: 'true' });
@@ -19,9 +18,14 @@ describe('Sessions requests', () => {
   let user;
 
   beforeEach(async () => {
+    server = app().listen();
     user = getFakeUser();
     await User.create(user);
-    server = app().listen();
+  });
+
+  afterEach((done) => {
+    server.close();
+    done();
   });
 
   it('GET /sessions/new', async () => {
@@ -65,10 +69,5 @@ describe('Sessions requests', () => {
       .post('/sessions')
       .send({ form: { email: 'impossible@user.mail', password: '1qwertY1' } });
     expect(res).toHaveHTTPStatus(422);
-  });
-
-  afterEach((done) => {
-    server.close();
-    done();
   });
 });
