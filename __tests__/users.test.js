@@ -6,7 +6,7 @@ import app from '..';
 import db from '../models';
 import encrypt from '../lib/secure';
 
-import getFakeUser from './lib/fakerUser';
+import getFakeUser from './lib/helpers';
 
 const { sequelize, User } = db;
 

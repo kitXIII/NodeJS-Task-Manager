@@ -4,7 +4,7 @@ import matchers from 'jest-supertest-matchers';
 import app from '..';
 import db from '../models';
 
-import getFakeUser from './lib/fakerUser';
+import getFakeUser from './lib/helpers';
 
 const { sequelize, User } = db;
 
