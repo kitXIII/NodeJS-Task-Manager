@@ -8,15 +8,16 @@ import db from '../models';
 const { Task, TaskStatus, User } = db;
 
 export default (router, { logger }) => {
+  const log = msg => logger(`Tasks: ${msg}`);
   router
     .get('tasks', '/tasks', async (ctx) => {
-      logger('Tasks: try to get tasks list');
+      log('Try to get tasks list');
       const tasks = await Task.findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
-      logger('Tasks: tasks list success');
+      log('Tasks list success');
       ctx.render('tasks', { tasks });
     })
     .get('newTask', '/tasks/new', async (ctx) => {
-      logger('Tasks: prepare data for new task form');
+      log('Prepare data for new task form');
       const task = Task.build();
       const taskStatuses = await TaskStatus.findAll();
       const statusList = buildList.status(taskStatuses);
@@ -26,27 +27,27 @@ export default (router, { logger }) => {
     })
     .get('task', '/tasks/:id', async (ctx) => {
       const task = await getTaskById(ctx.params.id, ctx);
-      logger('Tasks: task data prepared to view');
+      log('Task data prepared to view');
       ctx.render('tasks/task', { task });
     })
     .post('tasks', '/tasks', async (ctx) => {
       checkSession(ctx);
       const { form } = ctx.request.body;
-      logger('Tasks: got new task data');
+      log('Got new task data');
       const user = await getUserById(ctx.state.userId, ctx);
       await isValidId(form.taskStatusId, TaskStatus, ctx);
       await isValidId(form.assignedToId, User, ctx);
       const statusList = buildList.status(await TaskStatus.findAll(), form.taskStatusId);
       const userList = buildList.user(await User.findAll(), form.assignedToId, 'nameWithEmail');
-      logger('Tasks: try to validate new task data');
+      log('Try to validate new task data');
       try {
         const task = await user.createInitializedTask(form);
-        logger(`Tasks: new task ${task.name} has been created`);
+        log(`New task ${task.name} has been created`);
         ctx.flash.set({ message: `Task ${task.name} has been created`, type: 'success' });
         ctx.redirect(router.url('tasks'));
       } catch (err) {
         ctx.status = 422;
-        logger(`Tasks fial on task creation: ${err.message}`);
+        log(`Fail on task creation: ${err.message}`);
         ctx.render('tasks/new', { f: buildFormObj(form, err), statusList, userList });
       }
     })
@@ -63,7 +64,7 @@ export default (router, { logger }) => {
       const allowedFields = ['name', 'description', 'taskStatusId', 'assignedToId'];
       const data = pickFormValues(allowedFields, ctx);
       if (!hasChanges(data, task)) {
-        logger(`Tasks: There was nothing to change task with id: ${task.id}`);
+        log(`There was nothing to change task with id: ${task.id}`);
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
         ctx.redirect(router.url('task', task.id));
         return;
@@ -72,14 +73,14 @@ export default (router, { logger }) => {
       await isValidId(data.assignedToId, User, ctx);
       const statusList = buildList.status(await TaskStatus.findAll(), data.taskStatusId);
       const userList = buildList.user(await User.findAll(), data.assignedToId, 'nameWithEmail');
-      logger(`Tasks: try to update task with id: ${task.id}`);
+      log(`Try to update task with id: ${task.id}`);
       try {
         await task.update({ ...data });
-        logger(`Tasks: update task with id: ${task.id}, is OK`);
+        log(`Update task with id: ${task.id}, is OK`);
         ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
         ctx.redirect(router.url('task', task.id));
       } catch (err) {
-        logger(`Tasks: patch task with id: ${task.id}, problem: ${err.message}`);
+        log(`Patch task with id: ${task.id}, problem: ${err.message}`);
         ctx.task = 422;
         ctx.render('tasks/edit', { f: buildFormObj(task, err), statusList, userList });
       }
@@ -87,20 +88,21 @@ export default (router, { logger }) => {
     .delete('deleteTask', '/tasks/:id', async (ctx) => {
       const task = await getTaskById(ctx.params.id, ctx);
       checkSession(ctx);
-      logger(`Tasks: try to delete task with id: ${task.id}`);
+      log(`Try to delete task with id: ${task.id}`);
       try {
         await task.destroy();
         const message = `Task #${task.id} ${task.name} was removed`;
-        logger(message);
+        log(message);
         ctx.flash.set({ message, type: 'info' });
         ctx.redirect(router.url('tasks'));
       } catch (err) {
-        logger(`Tasks: delete task with id: ${task.id} problem: ${err.message}`);
+        log(`Delete task with id: ${task.id} problem: ${err.message}`);
         ctx.flash.set({ message: `Unable to delete task ${task.name}`, type: 'warning' });
         ctx.redirect(router.url('tasks'));
       }
     })
     .all('/tasks', (ctx) => {
+      log('No such route');
       ctx.throw(404);
     });
 };

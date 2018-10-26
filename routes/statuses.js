@@ -7,27 +7,28 @@ import db from '../models';
 const { TaskStatus } = db;
 
 export default (router, { logger }) => {
+  const log = msg => logger(`Statuses: ${msg}`);
   router
     .get('statuses', '/statuses', async (ctx) => {
       const statuses = await TaskStatus.findAll();
-      logger('Statuses: statuses list success');
+      log('Statuses list success');
       ctx.render('statuses', { statuses });
     })
     .get('newStatus', '/statuses/new', (ctx) => {
-      logger('Statuses: prepare data for new status form');
+      log('Prepare data for new status form');
       const status = TaskStatus.build();
       ctx.render('statuses/new', { f: buildFormObj(status) });
     })
     .post('statuses', '/statuses', async (ctx) => {
       checkSession(ctx);
       const { form } = ctx.request.body;
-      logger(`Statuses: got new tasks status data: ${form.name}`);
+      log(`Got new tasks status data: ${form.name}`);
       const status = TaskStatus.build(form);
       try {
         await status.validate();
-        logger('Statuses: validation success');
+        log('Validation success');
         await status.save();
-        logger('Statuses: new satus has been created');
+        log('New satus has been created');
         ctx.flash.set({ message: 'Satus has been created', type: 'success' });
         ctx.redirect(router.url('statuses'));
       } catch (err) {
@@ -45,19 +46,19 @@ export default (router, { logger }) => {
       checkSession(ctx);
       const data = pickFormValues(['name'], ctx);
       if (!hasChanges(data, status)) {
-        logger(`Statuses: There was nothing to change satatus with id: ${status.id}`);
+        log(`There was nothing to change satatus with id: ${status.id}`);
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
         ctx.redirect(router.url('statuses'));
         return;
       }
-      logger(`Statuses: try to update: ${data.name}`);
+      log(`Try to update: ${data.name}`);
       try {
         await status.update({ ...data });
-        logger(`Statuses: update status with id: ${status.id}, is OK`);
+        log(`Update status with id: ${status.id}, is OK`);
         ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
         ctx.redirect(router.url('statuses'));
       } catch (err) {
-        logger(`Statuses: patch status with id: ${status.id}, problem: ${err.message}`);
+        log(`Patch status with id: ${status.id}, problem: ${err.message}`);
         ctx.status = 422;
         ctx.render('statuses/edit', { f: buildFormObj(status, err) });
       }
@@ -65,20 +66,21 @@ export default (router, { logger }) => {
     .delete('deleteStatus', '/statuses/:id', async (ctx) => {
       const status = await getStatusById(Number(ctx.params.id), ctx);
       checkSession(ctx);
-      logger(`Statuses: try to delete status with id: ${status.id}`);
+      log(`Try to delete status with id: ${status.id}`);
       try {
         await status.destroy();
         const message = `Status ${status.name} was removed`;
-        logger(message);
+        log(message);
         ctx.flash.set({ message, type: 'info' });
         ctx.redirect(router.url('statuses'));
       } catch (err) {
-        logger(`Statuses: delete status ${status.name} problem: ${err.message}`);
+        log(`Delete status ${status.name} problem: ${err.message}`);
         ctx.flash.set({ message: `Unable to delete status ${status.name}`, type: 'warning' });
         ctx.redirect(router.url('statuses'));
       }
     })
     .all('/statuses', (ctx) => {
+      log('No such route');
       ctx.throw(404);
     });
 };

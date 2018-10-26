@@ -10,33 +10,33 @@ import db from '../models';
 const { User } = db;
 
 export default (router, { logger }) => {
+  const log = msg => logger(`Users: ${msg}`);
   router
     .get('users', '/users', async (ctx) => {
-      logger('Users: try to get users list');
+      log('Try to get users list');
       const users = await User.findAll();
-      logger('Users: users list success');
+      log('Users list success');
       ctx.render('users', { users });
     })
     .get('newUser', '/users/new', (ctx) => {
-      logger('Users: prepare data for new user form');
+      log('Prepare data for new user form');
       const user = User.build();
       ctx.render('users/new', { f: buildFormObj(user) });
     })
     .post('users', '/users', async (ctx) => {
       const { form } = ctx.request.body;
-      logger(`Users: got new user data: ${form.firstName} ${form.email}`);
+      log(`Got new user data: ${form.firstName} ${form.email}`);
       const user = User.build(form);
       try {
-        logger('Users: try to validate user data');
+        log('Try to validate user data');
         await user.validate();
-        logger('Users: compare password and confirm password');
         if (form.password !== form.confirmPassword) {
-          logger('Users: password not match');
+          log('Password and confirm password not match');
           throw new ConfirmPasswordError('Values of entered passwords must match');
         }
-        logger('Users: try to create user (save to database) new user');
+        log('Try to create user (save to database) new user');
         await user.save();
-        logger('Users: new user has been created');
+        log('New user has been created');
         ctx.flash.set({ message: 'User has been created', type: 'success' });
         ctx.redirect(router.url('root'));
       } catch (err) {
@@ -47,7 +47,7 @@ export default (router, { logger }) => {
     .get('user', '/users/:id', async (ctx) => {
       const { id } = ctx.params;
       const user = await getUserById(id, ctx);
-      logger('Users: user data prepared to view');
+      log('User data prepared to view');
       ctx.render('users/user', { user });
     })
     .get('editUser', '/users/:id/edit', async (ctx) => {
@@ -61,20 +61,20 @@ export default (router, { logger }) => {
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = pickFormValues(allowedFields, ctx);
       if (!hasChanges(data, user)) {
-        logger(`Users: There was nothing to change user with id: ${user.id}`);
+        log(`There was nothing to change user with id: ${user.id}`);
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
         ctx.redirect(router.url('user', user.id));
         return;
       }
-      logger(`Users: try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
+      log(`Try to update: ${data.firstName}, ${data.lastName}, ${data.email}`);
       try {
         await user.update({ ...data });
-        logger(`Users: update user with id: ${user.id}, is OK`);
+        log(`update user with id: ${user.id}, is OK`);
         ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
         ctx.session.userName = user.firstName;
         ctx.redirect(router.url('user', user.id));
       } catch (err) {
-        logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
+        log(`patch user with id: ${user.id}, problem: ${err.message}`);
         ctx.status = 422;
         ctx.render('users/edit', { f: buildFormObj(user, err) });
       }
@@ -95,27 +95,27 @@ export default (router, { logger }) => {
         ctx.redirect(router.url('user', user.id));
         return;
       }
-      logger('Users: try to change password');
+      log('Try to change password');
       try {
         if (!data.password) {
-          logger('Users: password error');
+          log('Password error');
           throw new NewPasswordError("Password can't be empty");
         }
         if (!data.currentPassword || user.passwordDigest !== encrypt(data.currentPassword)) {
-          logger('Users: current password error');
+          log('Current password error');
           throw new CurrentPasswordError('Wrong value');
         }
         if (data.password !== data.confirmPassword) {
-          logger('Users: password not match');
+          log('Password not match');
           throw new ConfirmPasswordError('Values of entered passwords must match');
         }
         const { password } = data;
         await user.update({ password });
-        logger(`Users: user with id: ${user.id} change password successful`);
+        log(`User with id: ${user.id} change password successful`);
         ctx.flash.set({ message: 'Your password has been changed.', type: 'success' });
         ctx.redirect(router.url('user', user.id));
       } catch (err) {
-        logger(`Users: patch user with id: ${user.id}, problem: ${err.message}`);
+        log(`Patch user with id: ${user.id}, problem: ${err.message}`);
         ctx.status = 422;
         ctx.render('users/password', { f: buildFormObj(user, err) });
       }
@@ -123,20 +123,21 @@ export default (router, { logger }) => {
     .delete('deleteUser', '/users/:id', async (ctx) => {
       const user = await getUserById(ctx.params.id, ctx);
       checkAuth(user, ctx);
-      logger(`Users: try to delete user with id: ${user.id}`);
+      log(`Try to delete user with id: ${user.id}`);
       try {
         await user.destroy();
-        logger(`Users: user with id: ${user.id} deleted`);
+        log(`User with id: ${user.id} deleted`);
         ctx.session = {};
         ctx.flash.set({ message: 'Your user data has been completely deleted from the system. Farewell.', type: 'info' });
         ctx.redirect(router.url('root'));
       } catch (err) {
-        logger(`Users: delete user with id: ${user.id} problem: ${err.message}`);
+        log(`Delete user with id: ${user.id} problem: ${err.message}`);
         ctx.flash.set({ message: `Unable to delete user ${user.fullName}`, type: 'warning' });
         ctx.redirect(router.url('user', user.id));
       }
     })
     .all('/users', (ctx) => {
+      log('No such route');
       ctx.throw(404);
     });
 };

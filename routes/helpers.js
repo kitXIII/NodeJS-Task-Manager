@@ -45,17 +45,17 @@ export const isValidId = async (id, Model, ctx) => {
 
 export const checkSession = (ctx) => {
   if (!ctx.state.isSignedIn()) {
-    logger('Check is request authorized: fail');
+    logger('Check is user signed in: FAIL');
     ctx.throw(401);
   }
-  logger('Statuses: OK');
+  logger('Check is user signed in: OK');
 };
 
 export const checkAuth = (user, ctx) => {
   checkSession(ctx);
   if (user.id !== ctx.state.userId) {
-    logger('Check is user authorized: fail');
+    logger('Check is user authorized: FAIL');
     ctx.throw(401);
   }
-  logger('Statuses: OK');
+  logger('Check is user authorized: OK');
 };

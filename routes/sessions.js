@@ -5,15 +5,16 @@ import db from '../models';
 const { User } = db;
 
 export default (router, { logger }) => {
+  const log = msg => logger(`Sessions: ${msg}`);
   router
     .get('newSession', '/sessions/new', async (ctx) => {
-      logger('Sessions: prepare login form');
+      log('Prepare login form');
       const data = {};
       ctx.render('sessions/new', { f: buildFormObj(data) });
     })
     .post('session', '/sessions', async (ctx) => {
       const { email, password } = ctx.request.body.form;
-      logger(`Try to fing user with email ${email} in databse`);
+      log(`Try to fing user with email ${email} in databse`);
       const user = await User.findOne({
         where: {
           email,
@@ -22,7 +23,7 @@ export default (router, { logger }) => {
       if (user && user.passwordDigest === encrypt(password)) {
         ctx.session.userId = user.id;
         ctx.session.userName = user.firstName;
-        logger(`User with email ${email} logged in`);
+        log(`User with email ${email} logged in`);
         ctx.flash.set({ message: `Hello, ${user.firstName}`, type: 'info' });
         ctx.redirect(router.url('root'));
         return;
@@ -30,10 +31,10 @@ export default (router, { logger }) => {
       const errors = [];
       if (!user) {
         errors.push({ message: 'Some problems with the entered Email', path: 'email' });
-        logger(`Email: ${email} wrong`);
+        log(`Email: ${email} wrong`);
       } else {
         errors.push({ message: 'Some problems with the entered password', path: 'password' });
-        logger('Pasworg wrong');
+        log('Password wrong');
       }
       ctx.status = 422;
       ctx.render('sessions/new', { f: buildFormObj({ email }, { errors }) });
@@ -41,9 +42,11 @@ export default (router, { logger }) => {
     .delete('session', '/sessions', (ctx) => {
       ctx.session = {};
       ctx.flash.set({ message: 'Bye!', type: 'info' });
+      log('Session destroy');
       ctx.redirect(router.url('root'));
     })
     .all('/sessions', (ctx) => {
+      log('No such route');
       ctx.throw(404);
     });
 };
