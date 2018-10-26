@@ -1,7 +1,7 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import pickFormValues from '../lib/bodyFormPicker';
 import hasChanges from '../lib/changesQualifier';
-import { getStatusById, checkAuth } from './helpers';
+import { getStatusById, checkSession } from './helpers';
 import db from '../models';
 
 const { TaskStatus } = db;
@@ -19,7 +19,7 @@ export default (router, { logger }) => {
       ctx.render('statuses/new', { f: buildFormObj(status) });
     })
     .post('statuses', '/statuses', async (ctx) => {
-      checkAuth(ctx, logger);
+      checkSession(ctx);
       const { form } = ctx.request.body;
       logger(`Statuses: got new tasks status data: ${form.name}`);
       const status = TaskStatus.build(form);
@@ -37,12 +37,12 @@ export default (router, { logger }) => {
     })
     .get('editStatus', '/statuses/:id/edit', async (ctx) => {
       const status = await getStatusById(Number(ctx.params.id), ctx);
-      checkAuth(ctx, logger);
+      checkSession(ctx);
       ctx.render('statuses/edit', { f: buildFormObj(status) });
     })
     .patch('patchStatus', '/statuses/:id', async (ctx) => {
       const status = await getStatusById(Number(ctx.params.id), ctx);
-      checkAuth(ctx, logger);
+      checkSession(ctx);
       const data = pickFormValues(['name'], ctx);
       if (!hasChanges(data, status)) {
         logger(`Statuses: There was nothing to change satatus with id: ${status.id}`);
@@ -64,7 +64,7 @@ export default (router, { logger }) => {
     })
     .delete('deleteStatus', '/statuses/:id', async (ctx) => {
       const status = await getStatusById(Number(ctx.params.id), ctx);
-      checkAuth(ctx, logger);
+      checkSession(ctx);
       logger(`Statuses: try to delete status with id: ${status.id}`);
       try {
         await status.destroy();

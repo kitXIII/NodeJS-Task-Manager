@@ -2,7 +2,7 @@ import buildFormObj from '../lib/formObjectBuilder';
 import pickFormValues from '../lib/bodyFormPicker';
 import hasChanges from '../lib/changesQualifier';
 import buildList from '../lib/selectionListBuilder';
-import { checkAuth, isValidId, getTaskById, getUserById } from './helpers'; //eslint-disable-line
+import { checkSession, isValidId, getTaskById, getUserById } from './helpers'; //eslint-disable-line
 import db from '../models';
 
 const { Task, TaskStatus, User } = db;
@@ -30,7 +30,7 @@ export default (router, { logger }) => {
       ctx.render('tasks/task', { task });
     })
     .post('tasks', '/tasks', async (ctx) => {
-      checkAuth(ctx, logger);
+      checkSession(ctx);
       const { form } = ctx.request.body;
       logger('Tasks: got new task data');
       const user = await getUserById(ctx.state.userId, ctx);
@@ -52,14 +52,14 @@ export default (router, { logger }) => {
     })
     .get('editTask', '/tasks/:id/edit', async (ctx) => {
       const task = await getTaskById(ctx.params.id, ctx);
-      // checkAuth(ctx, logger);
+      checkSession(ctx);
       const statusList = buildList.status(await TaskStatus.findAll(), task.taskStatusId);
       const userList = buildList.user(await User.findAll(), task.assignedToId, 'nameWithEmail');
       ctx.render('tasks/edit', { f: buildFormObj(task), statusList, userList });
     })
     .patch('patchTask', '/tasks/:id', async (ctx) => {
       const task = await getTaskById(ctx.params.id, ctx);
-      // checkAuth(ctx, logger);
+      checkSession(ctx);
       const allowedFields = ['name', 'description', 'taskStatusId', 'assignedToId'];
       const data = pickFormValues(allowedFields, ctx);
       if (!hasChanges(data, task)) {
@@ -68,11 +68,10 @@ export default (router, { logger }) => {
         ctx.redirect(router.url('task', task.id));
         return;
       }
-      if (data.taskStatusId) {
-        await isValidId(data.taskStatusId, TaskStatus, ctx);
-      }
-      const taskStatuses = await TaskStatus.findAll();
-      const statusList = buildList.status(taskStatuses, data.taskStatusId || task.taskStatusId);
+      await isValidId(data.taskStatusId, TaskStatus, ctx);
+      await isValidId(data.assignedToId, User, ctx);
+      const statusList = buildList.status(await TaskStatus.findAll(), data.taskStatusId);
+      const userList = buildList.user(await User.findAll(), data.assignedToId, 'nameWithEmail');
       logger(`Tasks: try to update task with id: ${task.id}`);
       try {
         await task.update({ ...data });
@@ -82,12 +81,12 @@ export default (router, { logger }) => {
       } catch (err) {
         logger(`Tasks: patch task with id: ${task.id}, problem: ${err.message}`);
         ctx.task = 422;
-        ctx.render('tasks/edit', { f: buildFormObj(task, err), statusList });
+        ctx.render('tasks/edit', { f: buildFormObj(task, err), statusList, userList });
       }
     })
     .delete('deleteTask', '/tasks/:id', async (ctx) => {
       const task = await getTaskById(ctx.params.id, ctx);
-      // checkAuth(ctx, logger);
+      checkSession(ctx);
       logger(`Tasks: try to delete task with id: ${task.id}`);
       try {
         await task.destroy();
