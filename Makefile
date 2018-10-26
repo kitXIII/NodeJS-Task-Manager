@@ -19,7 +19,7 @@ run:
 start:
 	npm run start
 
-heroku-start: db-setup db-fill
+heroku-start: db-setup
 	npm run start
 
 console:
