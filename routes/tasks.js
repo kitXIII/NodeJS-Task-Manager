@@ -25,7 +25,7 @@ export default (router, { logger }) => {
       ctx.render('tasks/new', { f: buildFormObj(task), statusList, userList });
     })
     .get('task', '/tasks/:id', async (ctx) => {
-      const task = await getTaskById(ctx.params.id, ctx, logger);
+      const task = await getTaskById(ctx.params.id, ctx);
       logger('Tasks: task data prepared to view');
       ctx.render('tasks/task', { task });
     })
@@ -33,9 +33,9 @@ export default (router, { logger }) => {
       checkAuth(ctx, logger);
       const { form } = ctx.request.body;
       logger('Tasks: got new task data');
-      const user = await getUserById(ctx.state.userId, ctx, logger);
-      await isValidId(form.taskStatusId, TaskStatus, ctx, logger);
-      await isValidId(form.assignedToId, User, ctx, logger);
+      const user = await getUserById(ctx.state.userId, ctx);
+      await isValidId(form.taskStatusId, TaskStatus, ctx);
+      await isValidId(form.assignedToId, User, ctx);
       const statusList = buildList.status(await TaskStatus.findAll(), form.taskStatusId);
       const userList = buildList.user(await User.findAll(), form.assignedToId, 'nameWithEmail');
       logger('Tasks: try to validate new task data');
@@ -51,14 +51,14 @@ export default (router, { logger }) => {
       }
     })
     .get('editTask', '/tasks/:id/edit', async (ctx) => {
-      const task = await getTaskById(ctx.params.id, ctx, logger);
+      const task = await getTaskById(ctx.params.id, ctx);
       // checkAuth(ctx, logger);
-      const taskStatuses = await TaskStatus.findAll();
-      const statusList = buildList.status(taskStatuses, task.taskStatusId);
-      ctx.render('tasks/edit', { f: buildFormObj(task), statusList });
+      const statusList = buildList.status(await TaskStatus.findAll(), task.taskStatusId);
+      const userList = buildList.user(await User.findAll(), task.assignedToId, 'nameWithEmail');
+      ctx.render('tasks/edit', { f: buildFormObj(task), statusList, userList });
     })
     .patch('patchTask', '/tasks/:id', async (ctx) => {
-      const task = await getTaskById(ctx.params.id, ctx, logger);
+      const task = await getTaskById(ctx.params.id, ctx);
       // checkAuth(ctx, logger);
       const allowedFields = ['name', 'description', 'taskStatusId', 'assignedToId'];
       const data = pickFormValues(allowedFields, ctx);
@@ -69,7 +69,7 @@ export default (router, { logger }) => {
         return;
       }
       if (data.taskStatusId) {
-        await isValidId(data.taskStatusId, TaskStatus, ctx, logger);
+        await isValidId(data.taskStatusId, TaskStatus, ctx);
       }
       const taskStatuses = await TaskStatus.findAll();
       const statusList = buildList.status(taskStatuses, data.taskStatusId || task.taskStatusId);
@@ -86,7 +86,7 @@ export default (router, { logger }) => {
       }
     })
     .delete('deleteTask', '/tasks/:id', async (ctx) => {
-      const task = await getTaskById(ctx.params.id, ctx, logger);
+      const task = await getTaskById(ctx.params.id, ctx);
       // checkAuth(ctx, logger);
       logger(`Tasks: try to delete task with id: ${task.id}`);
       try {

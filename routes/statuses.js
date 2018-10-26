@@ -36,12 +36,12 @@ export default (router, { logger }) => {
       }
     })
     .get('editStatus', '/statuses/:id/edit', async (ctx) => {
-      const status = await getStatusById(Number(ctx.params.id), ctx, logger);
+      const status = await getStatusById(Number(ctx.params.id), ctx);
       checkAuth(ctx, logger);
       ctx.render('statuses/edit', { f: buildFormObj(status) });
     })
     .patch('patchStatus', '/statuses/:id', async (ctx) => {
-      const status = await getStatusById(Number(ctx.params.id), ctx, logger);
+      const status = await getStatusById(Number(ctx.params.id), ctx);
       checkAuth(ctx, logger);
       const data = pickFormValues(['name'], ctx);
       if (!hasChanges(data, status)) {
@@ -63,7 +63,7 @@ export default (router, { logger }) => {
       }
     })
     .delete('deleteStatus', '/statuses/:id', async (ctx) => {
-      const status = await getStatusById(Number(ctx.params.id), ctx, logger);
+      const status = await getStatusById(Number(ctx.params.id), ctx);
       checkAuth(ctx, logger);
       logger(`Statuses: try to delete status with id: ${status.id}`);
       try {

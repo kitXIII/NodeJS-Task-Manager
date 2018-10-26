@@ -4,27 +4,10 @@ import hasChanges from '../lib/changesQualifier';
 import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
 import encrypt from '../lib/secure';
 import pickFormValues from '../lib/bodyFormPicker';
+import { checkAuth, getUserById } from './helpers';
 import db from '../models';
 
 const { User } = db;
-
-const getUserById = async (id, ctx, logger) => {
-  logger(`Users: getting user with id: ${id} from DB`);
-  const user = await User.findById(Number(id));
-  if (!user) {
-    logger(`User with userId: ${id} not found`);
-    ctx.throw(404);
-  }
-  return user;
-};
-
-const checkAuth = (owner, ctx, logger) => {
-  logger('Users: check that authorized user data is requested');
-  if (!ctx.state.isSignedIn() || owner.id !== ctx.state.userId) {
-    ctx.throw(401);
-  }
-  logger('Users: OK');
-};
 
 export default (router, { logger }) => {
   router
@@ -63,18 +46,18 @@ export default (router, { logger }) => {
     })
     .get('user', '/users/:id', async (ctx) => {
       const { id } = ctx.params;
-      const user = await getUserById(id, ctx, logger);
+      const user = await getUserById(id, ctx);
       logger('Users: user data prepared to view');
       ctx.render('users/user', { user });
     })
     .get('editUser', '/users/:id/edit', async (ctx) => {
-      const user = await getUserById(ctx.params.id, ctx, logger);
-      checkAuth(user, ctx, logger);
+      const user = await getUserById(ctx.params.id, ctx);
+      checkAuth(user, ctx);
       ctx.render('users/edit', { f: buildFormObj(user) });
     })
     .patch('patchUser', '/users/:id', async (ctx) => {
-      const user = await getUserById(ctx.params.id, ctx, logger);
-      checkAuth(user, ctx, logger);
+      const user = await getUserById(ctx.params.id, ctx);
+      checkAuth(user, ctx);
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = pickFormValues(allowedFields, ctx);
       if (!hasChanges(data, user)) {
@@ -97,14 +80,14 @@ export default (router, { logger }) => {
       }
     })
     .get('editUserPassword', '/users/:id/password/edit', async (ctx) => {
-      const owner = await getUserById(ctx.params.id, ctx, logger);
-      checkAuth(owner, ctx, logger);
+      const owner = await getUserById(ctx.params.id, ctx);
+      checkAuth(owner, ctx);
       const user = _.pick(owner, ['id']);
       ctx.render('users/password', { f: buildFormObj(user) });
     })
     .patch('patchUserPassword', '/users/:id/password', async (ctx) => {
-      const user = await getUserById(ctx.params.id, ctx, logger);
-      checkAuth(user, ctx, logger);
+      const user = await getUserById(ctx.params.id, ctx);
+      checkAuth(user, ctx);
       const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
       const data = pickFormValues(allowedFields, ctx);
       if (_.isEmpty(data)) {
@@ -138,8 +121,8 @@ export default (router, { logger }) => {
       }
     })
     .delete('deleteUser', '/users/:id', async (ctx) => {
-      const user = await getUserById(ctx.params.id, ctx, logger);
-      checkAuth(user, ctx, logger);
+      const user = await getUserById(ctx.params.id, ctx);
+      checkAuth(user, ctx);
       logger(`Users: try to delete user with id: ${user.id}`);
       try {
         await user.destroy();
