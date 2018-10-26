@@ -1,6 +1,6 @@
+import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
-import pickFormValues from '../lib/bodyFormPicker';
-import hasChanges from '../lib/changesQualifier';
+import { getChanges, pickFormValues } from '../lib/helpers';
 import buildList from '../lib/selectionListBuilder';
 import { checkSession, isValidId, getTaskById, getUserById } from './helpers'; //eslint-disable-line
 import db from '../models';
@@ -17,6 +17,7 @@ export default (router, { logger }) => {
       ctx.render('tasks', { tasks });
     })
     .get('newTask', '/tasks/new', async (ctx) => {
+      checkSession(ctx);
       log('Prepare data for new task form');
       const task = Task.build();
       const taskStatuses = await TaskStatus.findAll();
@@ -62,20 +63,29 @@ export default (router, { logger }) => {
       const task = await getTaskById(ctx.params.id, ctx);
       checkSession(ctx);
       const allowedFields = ['name', 'description', 'taskStatusId', 'assignedToId'];
-      const data = pickFormValues(allowedFields, ctx);
-      if (!hasChanges(data, task)) {
+      const pickedFormData = pickFormValues(allowedFields, ctx);
+      const changes = getChanges(pickedFormData, task);
+      console.log(pickedFormData);
+      console.log(changes);
+      if (_.isEmpty(changes)) {
         log(`There was nothing to change task with id: ${task.id}`);
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
         ctx.redirect(router.url('task', task.id));
         return;
       }
-      await isValidId(data.taskStatusId, TaskStatus, ctx);
-      await isValidId(data.assignedToId, User, ctx);
-      const statusList = buildList.status(await TaskStatus.findAll(), data.taskStatusId);
-      const userList = buildList.user(await User.findAll(), data.assignedToId, 'nameWithEmail');
+      if (changes.taskStatusId) {
+        await isValidId(changes.taskStatusId, TaskStatus, ctx);
+      }
+      if (changes.assignedToId) {
+        await isValidId(changes.assignedToId, User, ctx);
+      }
+      const statusList = buildList
+        .status(await TaskStatus.findAll(), changes.taskStatusId || task.taskStatusId);
+      const userList = buildList
+        .user(await User.findAll(), changes.assignedToId || task.assignedToId, 'nameWithEmail');
       log(`Try to update task with id: ${task.id}`);
       try {
-        await task.update({ ...data });
+        await task.update({ ...changes });
         log(`Update task with id: ${task.id}, is OK`);
         ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
         ctx.redirect(router.url('task', task.id));
