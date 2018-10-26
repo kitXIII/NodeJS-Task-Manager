@@ -15,6 +15,7 @@ export default (router, { logger }) => {
       ctx.render('statuses', { statuses });
     })
     .get('newStatus', '/statuses/new', (ctx) => {
+      checkSession(ctx);
       log('Prepare data for new status form');
       const status = TaskStatus.build();
       ctx.render('statuses/new', { f: buildFormObj(status) });

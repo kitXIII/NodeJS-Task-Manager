@@ -3,6 +3,7 @@ install:
 
 db-setup:
 	npm run sequelize db:migrate
+	npm run sequelize db:seed:all
 
 db-flush:
 	npm run sequelize db:migrate:undo:all
@@ -16,8 +17,7 @@ run:
 start:
 	npm run start
 
-heroku-start:
-	npm run sequelize db:migrate
+heroku-start: db-setup
 	npm run start
 
 console:
