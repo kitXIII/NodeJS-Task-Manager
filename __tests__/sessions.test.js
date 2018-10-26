@@ -40,9 +40,6 @@ describe('Sessions requests', () => {
       .post('/sessions')
       .send({ form: { email, password } });
     expect(res).toHaveHTTPStatus(302);
-
-    const url = res.headers.location;
-    expect(url).toBe('/');
   });
 
   it('DELETE /sessions (with post _method: DELETE)', async () => {
@@ -59,9 +56,6 @@ describe('Sessions requests', () => {
       .send({ _method: 'DELETE' });
       // .delete('/sessions');
     expect(delRes).toHaveHTTPStatus(302);
-
-    const url = delRes.headers.location;
-    expect(url).toBe('/');
   });
 
   it('POST /sessions (errors)', async () => {
