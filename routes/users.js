@@ -131,7 +131,7 @@ export default (router, { logger }) => {
         ctx.redirect(router.url('root'));
       } catch (err) {
         log(`Delete user with id: ${user.id} problem: ${err.message}`);
-        ctx.flash.set({ message: `Unable to delete user ${user.fullName}`, type: 'warning' });
+        ctx.flash.set({ message: `Unable to delete user ${user.fullName}. This user probably has assigned tasks. Try reassigning them.`, type: 'warning' });
         ctx.redirect(router.url('user', user.id));
       }
     })

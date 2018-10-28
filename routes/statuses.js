@@ -75,7 +75,7 @@ export default (router, { logger }) => {
         ctx.redirect(router.url('statuses'));
       } catch (err) {
         log(`Delete status ${status.name} problem: ${err.message}`);
-        ctx.flash.set({ message: `Unable to delete status ${status.name}`, type: 'warning' });
+        ctx.flash.set({ message: `Unable to delete item. Maybe exists tasks with status ${status.name}`, type: 'warning' });
         ctx.redirect(router.url('statuses'));
       }
     })
