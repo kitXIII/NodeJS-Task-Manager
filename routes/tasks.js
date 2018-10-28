@@ -82,14 +82,13 @@ export default (router, { logger }) => {
       const allowedFields = ['name', 'description', 'taskStatusId', 'assignedToId', 'tags'];
       const pickedFormData = pickFormValues(allowedFields, ctx);
       const changes = getChanges(pickedFormData, task);
-      // console.log(pickedFormData);
-      // console.log(changes);
       if (_.isEmpty(changes)) {
         log(`There was nothing to change task with id: ${task.id}`);
         ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });
         ctx.redirect(router.url('task', task.id));
         return;
       }
+      log(`Task with id: ${task.id} changes: ${JSON.stringify(changes)}`);
       if (changes.taskStatusId) {
         await isValidId(changes.taskStatusId, TaskStatus, ctx);
       }
@@ -107,7 +106,9 @@ export default (router, { logger }) => {
       log(`Try to update task with id: ${task.id}`);
       try {
         await task.update({ ...changes });
+        log(`Try to get recived tags of changed task with id: ${task.id}`);
         const tags = await getTagsByNames(recivedTagsNames);
+        log(`Try to set tags of task with id: ${task.id}`);
         await task.setTags(tags);
         log(`Update task with id: ${task.id}, is OK`);
         ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
