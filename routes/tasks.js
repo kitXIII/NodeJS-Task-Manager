@@ -10,6 +10,7 @@ import {
   getTagsByNames,
   stringifyTags,
   parseTags,
+  cleanTagsByTagNames,
 } from './helpers';
 
 const {
@@ -24,8 +25,7 @@ export default (router, { logger }) => {
   router
     .get('tasks', '/tasks', async (ctx) => {
       log('Try to get tasks list');
-      // const tasks = await Task.findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
-      const tasks = await Task.findAll();
+      const tasks = await Task.findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
       log('Tasks list success');
       ctx.render('tasks', { tasks });
     })
@@ -96,10 +96,9 @@ export default (router, { logger }) => {
       if (changes.assignedToId) {
         await isValidId(changes.assignedToId, User, ctx);
       }
-      // const currentTagsNames = task.Tags.mag(tag => tag.name);
+      const currentTagsNames = task.Tags.map(tag => tag.name);
       const recivedTagsNames = changes.tags ? parseTags(changes.tags) : [];
-      // const addedTagsNames = _.difference(recivedTagsNames, currentTagsNames);
-      // const removedTagNames = _.difference(currentTagsNames, recivedTagsNames);
+      const removedTagsNames = _.difference(currentTagsNames, recivedTagsNames);
 
       const statusList = buildList
         .status(await TaskStatus.findAll(), changes.taskStatusId || task.taskStatusId);
@@ -120,6 +119,10 @@ export default (router, { logger }) => {
           task.tags = changes.tags;
         }
         ctx.render('tasks/edit', { f: buildFormObj(task, err), statusList, userList });
+      }
+      if (!_.isEmpty(removedTagsNames)) {
+        log('Some tags have been removed, trying to clean the Tags table from entries with empty Task links');
+        await cleanTagsByTagNames(removedTagsNames);
       }
     })
     .delete('deleteTask', '/tasks/:id', async (ctx) => {

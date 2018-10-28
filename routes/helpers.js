@@ -6,19 +6,25 @@ const { Tag } = db;
 
 const { logger } = container;
 
+const findByIdDispatcher = {
+  User: (Model, id) => Model.findById(id),
+  TaskStatus: (Model, id) => Model.findById(id),
+  Task: (Model, id) => Model.scope('full').findById(id),
+};
+
 export const getById = async (id, Model, ctx) => {
   logger(`Getting ${Model.name} with id: ${id} from DB`);
-  const status = await Model.findById(id);
-  if (!status) {
+  const result = findByIdDispatcher[Model.name](Model, id);
+  if (!result) {
     logger(`${Model.name} with id: ${id} not found`);
     ctx.throw(404);
   }
-  return status;
+  return result;
 };
 
 export const isValidId = async (id, Model, ctx) => {
-  const status = await Model.findById(Number(id));
-  if (!status) {
+  const result = await Model.findById(Number(id));
+  if (!result) {
     logger(`Check is valid id: ${Model.name} with id: ${id} not found`);
     ctx.throw(404);
   }
@@ -55,6 +61,12 @@ export const getTagsByNames = tagsNames => Promise.all(tagsNames
       .then(createdTags => [...foundTags, ...createdTags]);
   });
 
-// export const cleanTagsByTagNames = tagsNames => Promise.all(tagsNames
-//   .map(name => ))
-//   .then((results) => {});
+export const cleanTagsByTagNames = tagsNames => Promise.all(tagsNames
+  .map(name => Tag.find({
+    where: { name },
+    include: ['Tasks'],
+  })))
+  .then((results) => {
+    const tags = results.filter(tag => _.isEmpty(tag.Tasks));
+    return Promise.all(tags.map(tag => tag.destroy()));
+  });
