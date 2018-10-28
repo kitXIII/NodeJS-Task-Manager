@@ -9,6 +9,7 @@ block content
           +textarea(f, 'description')
           +select(f, 'taskStatusId', { list: statusList })
           +select(f, 'assignedToId', { list: userList })
+          +textarea(f, 'tags', { rows: 2, inputText: 'Separate tags with a comma (,)'})
           .form-group
             a.btn.btn-info.mr-2(href=urlFor('tasks') data-tooltip='true' data-placement='bottom' title='Back') 
               i.fas.fa-undo-alt

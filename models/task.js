@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     description: DataTypes.TEXT,
   }, {
+    // defaultScope: {
+    //   include: ['taskStatus', 'creator', 'assignedTo', 'Tags'],
+    // },
     getterMethods: {
       created() {
         return formatDate(this.createdAt);
@@ -29,6 +32,9 @@ module.exports = (sequelize, DataTypes) => {
     Task.belongsTo(models.User, { as: 'creator', foreignKey: 'creatorId' });
     Task.belongsTo(models.User, { as: 'assignedTo', foreignKey: 'assignedToId' });
     Task.belongsToMany(models.Tag, { through: 'TaskTags', foreignKey: 'taskId' });
+    Task.addScope('defaultScope', {
+      include: ['taskStatus', 'creator', 'assignedTo', 'Tags'],
+    }, { override: true });
   };
 
   return Task;

@@ -1,37 +1,19 @@
+import _ from 'lodash';
 import container from '../container';
 import db from '../models';
 
-const { TaskStatus, Task, User } = db;
+const { Tag } = db;
+
 const { logger } = container;
 
-export const getStatusById = async (id, ctx) => {
-  logger(`Getting satatus with id: ${id} from DB`);
-  const status = await TaskStatus.findById(id);
+export const getById = async (id, Model, ctx) => {
+  logger(`Getting ${Model.name} with id: ${id} from DB`);
+  const status = await Model.findById(id);
   if (!status) {
-    logger(`Gtatus with id: ${id} not found`);
+    logger(`${Model.name} with id: ${id} not found`);
     ctx.throw(404);
   }
   return status;
-};
-
-export const getTaskById = async (id, ctx) => {
-  logger(`Getting satatus with id: ${id} from DB`);
-  const task = await Task.findById(Number(id), { include: ['taskStatus', 'creator', 'assignedTo'] });
-  if (!task) {
-    logger(`Task with id: ${id} not found`);
-    ctx.throw(404);
-  }
-  return task;
-};
-
-export const getUserById = async (id, ctx) => {
-  logger(`Getting user with id: ${id} from DB`);
-  const user = await User.findById(Number(id));
-  if (!user) {
-    logger(`User with userId: ${id} not found`);
-    ctx.throw(404);
-  }
-  return user;
 };
 
 export const isValidId = async (id, Model, ctx) => {
@@ -59,3 +41,20 @@ export const checkAuth = (user, ctx) => {
   }
   logger('Check is user authorized: OK');
 };
+
+export const parseTags = str => str.split(',').map(v => v.trim()).filter(v => v);
+export const stringifyTags = tags => tags.map(tag => tag.name).join(', ');
+
+export const getTagsByNames = tagsNames => Promise.all(tagsNames
+  .map(name => Tag.find({ where: { name } })))
+  .then((results) => {
+    const foundTags = results.filter(v => v);
+    const foundTagsNames = foundTags.map(tag => tag.name);
+    return Promise.all(_.difference(tagsNames, foundTagsNames)
+      .map(name => Tag.create({ name })))
+      .then(createdTags => [...foundTags, ...createdTags]);
+  });
+
+// export const cleanTagsByTagNames = tagsNames => Promise.all(tagsNames
+//   .map(name => ))
+//   .then((results) => {});

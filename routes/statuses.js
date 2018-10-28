@@ -1,6 +1,6 @@
 import buildFormObj from '../lib/formObjectBuilder';
 import { hasChanges, pickFormValues } from '../lib/helpers';
-import { getStatusById, checkSession } from './helpers';
+import { getById, checkSession } from './helpers';
 import db from '../models';
 
 const { TaskStatus } = db;
@@ -37,12 +37,12 @@ export default (router, { logger }) => {
       }
     })
     .get('editStatus', '/statuses/:id/edit', async (ctx) => {
-      const status = await getStatusById(Number(ctx.params.id), ctx);
+      const status = await getById(ctx.params.id, TaskStatus, ctx);
       checkSession(ctx);
       ctx.render('statuses/edit', { f: buildFormObj(status) });
     })
     .patch('patchStatus', '/statuses/:id', async (ctx) => {
-      const status = await getStatusById(Number(ctx.params.id), ctx);
+      const status = await getById(ctx.params.id, TaskStatus, ctx);
       checkSession(ctx);
       const data = pickFormValues(['name'], ctx);
       if (!hasChanges(data, status)) {
@@ -64,7 +64,7 @@ export default (router, { logger }) => {
       }
     })
     .delete('deleteStatus', '/statuses/:id', async (ctx) => {
-      const status = await getStatusById(Number(ctx.params.id), ctx);
+      const status = await getById(ctx.params.id, TaskStatus, ctx);
       checkSession(ctx);
       log(`Try to delete status with id: ${status.id}`);
       try {

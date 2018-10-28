@@ -47,5 +47,8 @@ mixin textarea(f, property, options = { rows: 3 })
     - const preparedLabel = `${_.upperFirst(_.lowerCase(property))}:`
     label= preparedLabel
     textarea(name=getInputName(f, property) class='form-control' rows=options['rows'])= value
+    - const inputText = options['inputText']
+    if inputText
+      small.form-text.text-muted= inputText
     if f.errors[property]
       .form-control-feedback= f.errors[property].map(({ message }) => message).join('. ')

@@ -24,6 +24,7 @@ const getFakeTask = async () => {
     taskStatusId,
     creatorId,
     assignedToId,
+    tags: '',
   };
 };
 

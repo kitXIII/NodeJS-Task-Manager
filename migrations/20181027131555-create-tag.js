@@ -7,9 +7,9 @@ module.exports = {
       type: Sequelize.INTEGER,
     },
     name: {
-      type: Sequelize.STRING,
       allowNull: false,
       unique: true,
+      type: Sequelize.STRING,
     },
     createdAt: {
       allowNull: false,
@@ -20,5 +20,6 @@ module.exports = {
       type: Sequelize.DATE,
     },
   }),
+
   down: queryInterface => queryInterface.dropTable('Tags'),
 };

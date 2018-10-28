@@ -29,6 +29,12 @@ block content
           strong Assigned to
         td= task.assignedTo.fullName
       tr
+        td
+          strong Tags
+        td
+          each tag in task.Tags
+            .badge.badge-primary= tag.name
+      tr
         td 
           strong Created at
         td= task.created

@@ -3,7 +3,7 @@ import buildFormObj from '../lib/formObjectBuilder';
 import { hasChanges, pickFormValues } from '../lib/helpers';
 import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
 import encrypt from '../lib/secure';
-import { checkAuth, getUserById } from './helpers';
+import { checkAuth, getById } from './helpers';
 import db from '../models';
 
 const { User } = db;
@@ -45,17 +45,17 @@ export default (router, { logger }) => {
     })
     .get('user', '/users/:id', async (ctx) => {
       const { id } = ctx.params;
-      const user = await getUserById(id, ctx);
+      const user = await getById(id, User, ctx);
       log('User data prepared to view');
       ctx.render('users/user', { user });
     })
     .get('editUser', '/users/:id/edit', async (ctx) => {
-      const user = await getUserById(ctx.params.id, ctx);
+      const user = await getById(ctx.params.id, User, ctx);
       checkAuth(user, ctx);
       ctx.render('users/edit', { f: buildFormObj(user) });
     })
     .patch('patchUser', '/users/:id', async (ctx) => {
-      const user = await getUserById(ctx.params.id, ctx);
+      const user = await getById(ctx.params.id, User, ctx);
       checkAuth(user, ctx);
       const allowedFields = ['firstName', 'lastName', 'email'];
       const data = pickFormValues(allowedFields, ctx);
@@ -79,13 +79,13 @@ export default (router, { logger }) => {
       }
     })
     .get('editUserPassword', '/users/:id/password/edit', async (ctx) => {
-      const owner = await getUserById(ctx.params.id, ctx);
+      const owner = await getById(ctx.params.id, User, ctx);
       checkAuth(owner, ctx);
       const user = _.pick(owner, ['id']);
       ctx.render('users/password', { f: buildFormObj(user) });
     })
     .patch('patchUserPassword', '/users/:id/password', async (ctx) => {
-      const user = await getUserById(ctx.params.id, ctx);
+      const user = await getById(ctx.params.id, User, ctx);
       checkAuth(user, ctx);
       const allowedFields = ['currentPassword', 'password', 'confirmPassword'];
       const data = pickFormValues(allowedFields, ctx);
@@ -120,7 +120,7 @@ export default (router, { logger }) => {
       }
     })
     .delete('deleteUser', '/users/:id', async (ctx) => {
-      const user = await getUserById(ctx.params.id, ctx);
+      const user = await getById(ctx.params.id, User, ctx);
       checkAuth(user, ctx);
       log(`Try to delete user with id: ${user.id}`);
       try {
