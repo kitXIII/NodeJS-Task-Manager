@@ -6,7 +6,7 @@ const { Tag } = db;
 
 const { logger } = container;
 
-const findByIdDispatcher = {
+const findByIdMakers = {
   User: (Model, id) => Model.findById(id),
   TaskStatus: (Model, id) => Model.findById(id),
   Task: (Model, id) => Model.scope('full').findById(id),
@@ -14,7 +14,7 @@ const findByIdDispatcher = {
 
 export const getById = async (id, Model, ctx) => {
   logger(`Getting ${Model.name} with id: ${id} from DB`);
-  const result = findByIdDispatcher[Model.name](Model, id);
+  const result = findByIdMakers[Model.name](Model, id);
   if (!result) {
     logger(`${Model.name} with id: ${id} not found`);
     ctx.throw(404);
