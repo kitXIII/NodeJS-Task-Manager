@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import { getChanges, pickFormValues } from '../lib/helpers';
-import buildList from '../lib/selectionListBuilder';
 import db from '../models';
 import {
   checkSession,
@@ -11,13 +10,14 @@ import {
   stringifyTags,
   parseTags,
   cleanTagsByTagNames,
+  listBuilders,
 } from './helpers';
 
 const {
   Task,
   TaskStatus,
   User,
-  // Tag,
+  Tag,
 } = db;
 
 export default (router, { logger }) => {
@@ -27,16 +27,27 @@ export default (router, { logger }) => {
       log('Try to get tasks list');
       const tasks = await Task.findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
       log('Tasks list success');
-      ctx.render('tasks', { tasks });
+      const taskStatus = listBuilders.status(await TaskStatus.findAll());
+      const assignedTo = listBuilders.user(await User.findAll(), 'nameWithEmail');
+      const tag = listBuilders.tag(await Tag.findAll());
+      const f = buildFormObj({
+        OnlyMyTasks: false,
+        taskStatus,
+        assignedTo,
+        tag,
+      });
+      ctx.render('tasks', { f, tasks });
     })
     .get('newTask', '/tasks/new', async (ctx) => {
       checkSession(ctx);
       log('Prepare data for new task form');
       const task = Task.build();
+      task.statusId = 1;
+      task.assignedToId = Number(ctx.state.userId);
       const taskStatuses = await TaskStatus.findAll();
-      const statusList = buildList.status(taskStatuses);
+      const statusList = listBuilders.status(taskStatuses);
       const users = await User.findAll();
-      const userList = buildList.user(users, ctx.state.userId, 'nameWithEmail');
+      const userList = listBuilders.user(users, 'nameWithEmail');
       ctx.render('tasks/new', { f: buildFormObj(task), statusList, userList });
     })
     .get('task', '/tasks/:id', async (ctx) => {
@@ -47,12 +58,12 @@ export default (router, { logger }) => {
     .post('tasks', '/tasks', async (ctx) => {
       checkSession(ctx);
       const { form } = ctx.request.body;
-      log('Got new task data');
+      log(`Got new task data: ${JSON.stringify(form)}`);
       const user = await getById(ctx.state.userId, User, ctx);
       await isValidId(form.taskStatusId, TaskStatus, ctx);
       await isValidId(form.assignedToId, User, ctx);
-      const statusList = buildList.status(await TaskStatus.findAll(), form.taskStatusId);
-      const userList = buildList.user(await User.findAll(), form.assignedToId, 'nameWithEmail');
+      const statusList = listBuilders.status(await TaskStatus.findAll());
+      const userList = listBuilders.user(await User.findAll(), 'nameWithEmail');
       log('Try to validate new task data');
       try {
         const task = await user.createInitializedTask(form);
@@ -70,8 +81,8 @@ export default (router, { logger }) => {
     .get('editTask', '/tasks/:id/edit', async (ctx) => {
       const task = await getById(ctx.params.id, Task, ctx);
       checkSession(ctx);
-      const statusList = buildList.status(await TaskStatus.findAll(), task.taskStatusId);
-      const userList = buildList.user(await User.findAll(), task.assignedToId, 'nameWithEmail');
+      const statusList = listBuilders.status(await TaskStatus.findAll());
+      const userList = listBuilders.user(await User.findAll(), 'nameWithEmail');
       task.tags = stringifyTags(task.Tags);
       ctx.render('tasks/edit', { f: buildFormObj(task), statusList, userList });
     })
@@ -99,10 +110,8 @@ export default (router, { logger }) => {
       const recivedTagsNames = changes.tags ? parseTags(changes.tags) : [];
       const removedTagsNames = _.difference(currentTagsNames, recivedTagsNames);
 
-      const statusList = buildList
-        .status(await TaskStatus.findAll(), changes.taskStatusId || task.taskStatusId);
-      const userList = buildList
-        .user(await User.findAll(), changes.assignedToId || task.assignedToId, 'nameWithEmail');
+      const statusList = listBuilders.status(await TaskStatus.findAll());
+      const userList = listBuilders.user(await User.findAll(), 'nameWithEmail');
       log(`Try to update task with id: ${task.id}`);
       try {
         await task.update({ ...changes });
@@ -119,6 +128,13 @@ export default (router, { logger }) => {
         if (changes.tags) {
           task.tags = changes.tags;
         }
+        if (changes.taskStatusId) {
+          task.taskStatusId = changes.taskStatusId;
+        }
+        if (changes.assignedToId) {
+          task.assignedToId = changes.assignedToId;
+        }
+        log(`Task with id: ${task.id} changes: ${JSON.stringify(task)}`);
         ctx.render('tasks/edit', { f: buildFormObj(task, err), statusList, userList });
       }
       if (!_.isEmpty(removedTagsNames)) {

@@ -2,6 +2,10 @@ extends ../layouts/application.pug
 include ../mixins/deletionModal.pug
 
 block content
+  //- +formFor(f, { url: urlFor('tasks') classList: ['form-inline'] })
+  //-   +select(f, 'taskStatusId', { list: f.object.statusList })
+  //-   +select(f, 'assignedToId', { list: f.object.userList })
+  //-   +select(f, 'tags', { list: f.object.tagList })
   table.table.table-stripped
     thead
       tr

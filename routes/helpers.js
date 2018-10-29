@@ -70,3 +70,10 @@ export const cleanTagsByTagNames = tagsNames => Promise.all(tagsNames
     const tags = results.filter(tag => _.isEmpty(tag.Tasks));
     return Promise.all(tags.map(tag => tag.destroy()));
   });
+
+export const listBuilders = {
+  status: items => items.map(item => _.pick(item, ['id', 'name'])),
+  tag: items => items.map(item => _.pick(item, ['id', 'name'])),
+  user: (items, visibleField = 'fullName') => items.map(item => _.pick(item, ['id', visibleField]))
+    .map(item => _.mapKeys(item, (value, key) => (key === visibleField ? 'name' : key))),
+};
