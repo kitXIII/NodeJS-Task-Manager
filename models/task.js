@@ -22,6 +22,23 @@ module.exports = (sequelize, DataTypes) => {
         return formatDate(this.updatedAt);
       },
     },
+    scopes: {
+      filterByAssignedToId: id => ({
+        where: {
+          assignedToId: id,
+        },
+      }),
+      filterByTaskStatusId: id => ({
+        where: {
+          taskStatusId: id,
+        },
+      }),
+      filterByCreatorId: id => ({
+        where: {
+          creatorId: id,
+        },
+      }),
+    },
   });
 
   Task.associate = (models) => {

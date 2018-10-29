@@ -11,41 +11,41 @@ import {
   parseTags,
   cleanTagsByTagNames,
   listBuilders,
+  prepareTaskScopes,
 } from './helpers';
 
 const {
-  Task,
-  TaskStatus,
-  User,
-  Tag,
+  Task, TaskStatus, User, Tag,
 } = db;
 
 export default (router, { logger }) => {
   const log = msg => logger(`Tasks: ${msg}`);
   router
     .get('tasks', '/tasks', async (ctx) => {
-      log('Try to get tasks list');
-      const tasks = await Task.findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
-      log('Tasks list success');
       const { query } = ctx.request;
-      console.log(query);
-      // const parsed = _.mapKeys(query, (value, key) => JSON.parse(key));
+      log(`Got /tasks query: ${JSON.stringify(query)}`);
+      const taskScopeFilters = prepareTaskScopes(query, ctx);
+      log(`Try to get tasks list, use scope filters: ${JSON.stringify(taskScopeFilters)}`);
+      const tasks = await Task.scope(taskScopeFilters)
+        .findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
+
+      log('Try to get lists for filters');
       const taskStatuses = await TaskStatus.findAll();
       const statusList = [{ id: 0, name: 'All' }, ...listBuilders.status(taskStatuses)];
       const users = await User.findAll();
       const userList = [{ id: 0, name: 'All' }, ...listBuilders.user(users, 'nameWithEmail')];
       const tags = await Tag.findAll();
       const tagList = [{ id: 0, name: 'All' }, ...listBuilders.tag(tags)];
+
       const f = buildFormObj({
-        onlyMyTasks: false,
-        statusList,
-        taskStatusId: 0,
-        userList,
-        assignedToId: 0,
-        tagList,
+        myTasksOnly: query.myTasksOnly || false,
+        taskStatusId: query.taskStatusId || 0,
+        assignedToId: query.assignedToId || 0,
         tagId: 0,
       }, {}, true);
-      ctx.render('tasks', { f, tasks });
+      ctx.render('tasks', {
+        f, tasks, statusList, userList, tagList,
+      });
     })
     .get('newTask', '/tasks/new', async (ctx) => {
       checkSession(ctx);

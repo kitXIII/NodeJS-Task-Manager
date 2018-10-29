@@ -77,3 +77,26 @@ export const listBuilders = {
   user: (items, visibleField = 'fullName') => items.map(item => _.pick(item, ['id', visibleField]))
     .map(item => _.mapKeys(item, (value, key) => (key === visibleField ? 'name' : key))),
 };
+
+const queryDataHandlers = {
+  myTasksOnly: {
+    getValue: (value, ctx) => (ctx.state.isSignedIn() && value === 'on' ? Number(ctx.state.userId) : 0),
+    getScope: id => (id !== 0 ? { method: ['filterByCreatorId', id] } : null),
+  },
+  taskStatusId: {
+    getValue: value => Number(value),
+    getScope: id => (id !== 0 ? { method: ['filterByTaskStatusId', id] } : null),
+  },
+  assignedToId: {
+    getValue: value => Number(value),
+    getScope: id => (id !== 0 ? { method: ['filterByAssignedToId', id] } : null),
+  },
+};
+
+export const prepareTaskScopes = (query, ctx) => _.keys(query)
+  .filter(key => queryDataHandlers[key])
+  .map((key) => {
+    const value = queryDataHandlers[key].getValue(query[key], ctx);
+    return queryDataHandlers[key].getScope(value);
+  })
+  .filter(v => v);
