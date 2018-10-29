@@ -2,15 +2,26 @@ extends ../layouts/application.pug
 include ../mixins/deletionModal.pug
 
 block content
-  //- +formFor(f, { url: urlFor('tasks') classList: ['form-inline'] })
-  //-   +select(f, 'taskStatusId', { list: f.object.statusList })
-  //-   +select(f, 'assignedToId', { list: f.object.userList })
-  //-   +select(f, 'tags', { list: f.object.tagList })
+  div
+    +formFor(f, { url: urlFor('tasks'), classList: ['form-row align-items-center justify-content-around'] })
+      .col-3.mt-3
+        .form-check
+          input#filterFormMyTasks.form-check-input(type='checkbox' name='myTasksOnly')
+          label.form-check-label(for='filterFormMyTasks') My tasks only
+      .col-3
+        +select(f, 'taskStatusId', { list: f.object.statusList })
+      .col-3
+        +select(f, 'assignedToId', { list: f.object.userList })
+      .col-2
+        +select(f, 'tag', { list: f.object.tagList })
+      .col-1.mt-3
+        button.btn.btn-outline-primary(type='submit' data-tooltip='true' data-placement='bottom' title='Apply filter')
+          i.fas.fa-filter
   table.table.table-stripped
     thead
       tr
         th #
-        th Name
+        th Task
         th Status
         th Creator
         th Assigned to

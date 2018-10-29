@@ -27,15 +27,24 @@ export default (router, { logger }) => {
       log('Try to get tasks list');
       const tasks = await Task.findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
       log('Tasks list success');
-      const taskStatus = listBuilders.status(await TaskStatus.findAll());
-      const assignedTo = listBuilders.user(await User.findAll(), 'nameWithEmail');
-      const tag = listBuilders.tag(await Tag.findAll());
+      const { query } = ctx.request;
+      console.log(query);
+      // const parsed = _.mapKeys(query, (value, key) => JSON.parse(key));
+      const taskStatuses = await TaskStatus.findAll();
+      const statusList = [{ id: 0, name: 'All' }, ...listBuilders.status(taskStatuses)];
+      const users = await User.findAll();
+      const userList = [{ id: 0, name: 'All' }, ...listBuilders.user(users, 'nameWithEmail')];
+      const tags = await Tag.findAll();
+      const tagList = [{ id: 0, name: 'All' }, ...listBuilders.tag(tags)];
       const f = buildFormObj({
-        OnlyMyTasks: false,
-        taskStatus,
-        assignedTo,
-        tag,
-      });
+        onlyMyTasks: false,
+        statusList,
+        taskStatusId: 0,
+        userList,
+        assignedToId: 0,
+        tagList,
+        tagId: 0,
+      }, {}, true);
       ctx.render('tasks', { f, tasks });
     })
     .get('newTask', '/tasks/new', async (ctx) => {
