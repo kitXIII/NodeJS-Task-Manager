@@ -12,7 +12,7 @@ import {
   cleanTagsByTagNames,
   listBuilders,
   prepareTaskScopes,
-} from './helpers';
+} from '../lib/routesHelpers';
 
 const {
   Task, TaskStatus, User, Tag,

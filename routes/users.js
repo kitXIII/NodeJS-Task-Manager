@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
+import encrypt from '../lib/secure';
 import { hasChanges, pickFormValues } from '../lib/helpers';
 import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
-import encrypt from '../lib/secure';
-import { checkAuth, getById } from './helpers';
+import { checkAuth, getById } from '../lib/routesHelpers';
 import db from '../models';
 
 const { User } = db;

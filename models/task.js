@@ -49,6 +49,18 @@ module.exports = (sequelize, DataTypes) => {
     Task.addScope('full', {
       include: ['taskStatus', 'creator', 'assignedTo', 'Tags'],
     });
+    Task.addScope('filterByTagsIds', ids => ({
+      include: [
+        {
+          model: models.Tag,
+          where: {
+            id: {
+              [sequelize.Op.in]: ids,
+            },
+          },
+        },
+      ],
+    }));
   };
 
   return Task;
