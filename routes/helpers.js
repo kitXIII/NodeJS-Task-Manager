@@ -73,7 +73,16 @@ export const cleanTagsByTagNames = tagsNames => Promise.all(tagsNames
 
 export const listBuilders = {
   status: items => items.map(item => _.pick(item, ['id', 'name'])),
-  tag: items => items.map(item => _.pick(item, ['id', 'name'])),
+  tag: (items, recivedItems) => {
+    const recived = new Set();
+    if (_.isArray(recivedItems)) {
+      recivedItems.forEach(item => recived.add(Number(item)));
+    } else {
+      recived.add(Number(recivedItems));
+    }
+    return items.map(item => _.pick(item, ['id', 'name']))
+      .map(item => (recived.has(item.id) ? { ...item, selected: true } : item));
+  },
   user: (items, visibleField = 'fullName') => items.map(item => _.pick(item, ['id', visibleField]))
     .map(item => _.mapKeys(item, (value, key) => (key === visibleField ? 'name' : key))),
 };

@@ -34,14 +34,14 @@ export default (router, { logger }) => {
       const statusList = [{ id: 0, name: 'All' }, ...listBuilders.status(taskStatuses)];
       const users = await User.findAll();
       const userList = [{ id: 0, name: 'All' }, ...listBuilders.user(users, 'nameWithEmail')];
+
       const tags = await Tag.findAll();
-      const tagList = [{ id: 0, name: 'All' }, ...listBuilders.tag(tags)];
+      const tagList = listBuilders.tag(tags, query.tags);
 
       const f = buildFormObj({
         myTasksOnly: query.myTasksOnly || false,
         taskStatusId: query.taskStatusId || 0,
         assignedToId: query.assignedToId || 0,
-        tagId: 0,
       }, {}, true);
       ctx.render('tasks', {
         f, tasks, statusList, userList, tagList,
