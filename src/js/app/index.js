@@ -18,7 +18,7 @@ export default () => {
       buttonContainer: '<div><div/>',
       templates: {
         filter: '<li class="multiselect-item filter"><div class="input-group px-1 mb-2"><input class="form-control multiselect-search" type="text"></div></li>',
-        filterClearBtn: '<div class="input-group-append"><button class="multiselect-clear-filter btn btn-outline-secondary" type="button"><i class="fas fa-broom"></i></button>',
+        filterClearBtn: '<div class="input-group-append"><button class="multiselect-clear-filter btn btn-secondary" type="button"><i class="fas fa-times"></i></button>',
         li: '<li class="ml-2"><a class="text-secondary" href="javascript:void(0);"><label></label></a></li>',
       },
     });
