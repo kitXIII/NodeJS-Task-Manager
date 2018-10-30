@@ -153,6 +153,7 @@ export default (router, { logger }) => {
     })
     .delete('deleteTask', '/tasks/:id', async (ctx) => {
       const task = await getById(ctx.params.id, Task, ctx);
+      const removedTagsNames = task.Tags.map(tag => tag.name);
       checkSession(ctx);
       log(`Try to delete task with id: ${task.id}`);
       try {
@@ -165,6 +166,10 @@ export default (router, { logger }) => {
         log(`Delete task with id: ${task.id} problem: ${err.message}`);
         ctx.flash.set({ message: `Unable to delete task ${task.name}`, type: 'warning' });
         ctx.redirect(router.url('tasks'));
+      }
+      if (!_.isEmpty(removedTagsNames)) {
+        log('Some tags have been removed, trying to clean the Tags table from entries with empty Task links');
+        await cleanTagsByTagNames(removedTagsNames);
       }
     })
     .all('/tasks', (ctx) => {
