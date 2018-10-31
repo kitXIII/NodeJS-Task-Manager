@@ -1,5 +1,6 @@
 extends ../layouts/application.pug
 include ../mixins/deletionModal.pug
+include ../mixins/pagination.pug
 block content
   div
     +formFor(f, { url: urlFor('tasks'), classList: ['form-row align-items-center justify-content-around'] })
@@ -67,3 +68,4 @@ block content
       a.btn.btn-success(href=urlFor('newTask') data-tooltip='true' data-placement='bottom' title='Add new task')
         span.d-none.d-md-inline Add &nbsp
         i.fas.fa-plus
+  +pagination({ items: navPages, route: 'tasks' })

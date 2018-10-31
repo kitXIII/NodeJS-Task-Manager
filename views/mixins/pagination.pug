@@ -1,0 +1,9 @@
+mixin pagination(options = {})
+  - const items = _.get(options, 'items', []);
+  - const routeName = _.get(options, 'route', 'root')
+  if items.length > 1
+    nav
+      ul.pagination.justify-content-end
+        each item in items
+          li(class=`${item.active ? 'page-item active' : 'page-item'}`)
+            a.page-link(href=urlFor(routeName, { query: item.query }))= item.text

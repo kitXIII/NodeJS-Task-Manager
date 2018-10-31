@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import buildFormObj from '../lib/formObjectBuilder';
 import { getChanges, pickFormValues } from '../lib/helpers';
+import pagination from '../lib/pagination';
 import db from '../models';
 import {
   checkSession,
@@ -24,10 +25,22 @@ export default (router, { logger }) => {
     .get('tasks', '/tasks', async (ctx) => {
       const { query } = ctx.request;
       log(`Got /tasks query: ${JSON.stringify(query)}`);
+
+      const page = Number(query.page) || 1;
+      const limit = process.env.LINES_PER_PAGE || 1000;
+      const offset = limit * (page - 1);
+
       const taskScopeFilters = prepareTaskScopes(query, ctx);
       log(`Try to get tasks list, use scope filters: ${JSON.stringify(taskScopeFilters)}`);
-      const tasks = await Task.scope(taskScopeFilters)
-        .findAll({ include: ['taskStatus', 'creator', 'assignedTo'] });
+      const { count, rows: tasks } = await Task.scope(taskScopeFilters).findAndCountAll({
+        include: ['taskStatus', 'creator', 'assignedTo'],
+        offset,
+        limit,
+      });
+      const pages = Math.ceil(count / limit);
+      log(`Got ${count} records from DB, setting lines per page: ${limit}, count of pages: ${pages}`);
+      const navPages = pagination(page, pages, query);
+      console.log(navPages);
 
       log('Try to get lists for filters');
       const taskStatuses = await TaskStatus.findAll();
@@ -44,7 +57,7 @@ export default (router, { logger }) => {
         assignedToId: query.assignedToId || 0,
       }, {}, true);
       ctx.render('tasks', {
-        f, tasks, statusList, userList, tagList,
+        f, tasks, statusList, userList, tagList, navPages,
       });
     })
     .get('newTask', '/tasks/new', async (ctx) => {
