@@ -39,6 +39,7 @@ export default (router, { logger }) => {
         include: ['taskStatus', 'creator', 'assignedTo'],
         offset,
         limit,
+        distinct: true,
       });
       const pages = Math.ceil(count / limit);
       log(`Got ${count} records from DB, setting lines per page: ${limit}, count of pages: ${pages}`);
