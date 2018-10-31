@@ -4,6 +4,7 @@ import encrypt from '../lib/secure';
 import { hasChanges, pickFormValues } from '../lib/helpers';
 import { ConfirmPasswordError, CurrentPasswordError, NewPasswordError } from '../lib/Errors';
 import { checkAuth, getById } from '../lib/routesHelpers';
+import pagination from '../lib/pagination';
 import db from '../models';
 
 const { User } = db;
@@ -12,10 +13,22 @@ export default (router, { logger }) => {
   const log = msg => logger(`Users: ${msg}`);
   router
     .get('users', '/users', async (ctx) => {
+      const { query } = ctx.request;
+      const page = Number(query.page) || 1;
+      const limit = process.env.LINES_PER_PAGE || 10;
+      const offset = limit * (page - 1) || 0;
+
       log('Try to get users list');
-      const users = await User.findAll();
+      const { count, rows: users } = await User.findAndCountAll({ offset, limit });
+      const pages = Math.ceil(count / limit);
+      log(`Got ${count} records from DB, setting lines per page: ${limit}, count of pages: ${pages}`);
+      const navPages = pagination(page, pages, query);
+      if (page < 1 || page > pages) {
+        ctx.throw(404);
+      }
+
       log('Users list success');
-      ctx.render('users', { users });
+      ctx.render('users', { users, navPages });
     })
     .get('newUser', '/users/new', (ctx) => {
       log('Prepare data for new user form');

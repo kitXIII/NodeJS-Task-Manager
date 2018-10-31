@@ -27,8 +27,8 @@ export default (router, { logger }) => {
       log(`Got /tasks query: ${JSON.stringify(query)}`);
 
       const page = Number(query.page) || 1;
-      const limit = process.env.LINES_PER_PAGE || 1000;
-      const offset = limit * (page - 1);
+      const limit = process.env.LINES_PER_PAGE || 10;
+      const offset = limit * (page - 1) || 0;
 
       const taskScopeFilters = prepareTaskScopes(query, ctx);
       log(`Try to get tasks list, use scope filters: ${JSON.stringify(taskScopeFilters)}`);
@@ -40,7 +40,9 @@ export default (router, { logger }) => {
       const pages = Math.ceil(count / limit);
       log(`Got ${count} records from DB, setting lines per page: ${limit}, count of pages: ${pages}`);
       const navPages = pagination(page, pages, query);
-      console.log(navPages);
+      if (page < 1 || page > pages) {
+        ctx.throw(404);
+      }
 
       log('Try to get lists for filters');
       const taskStatuses = await TaskStatus.findAll();
