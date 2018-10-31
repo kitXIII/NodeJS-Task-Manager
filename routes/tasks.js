@@ -27,6 +27,9 @@ export default (router, { logger }) => {
       log(`Got /tasks query: ${JSON.stringify(query)}`);
 
       const page = Number(query.page) || 1;
+      if (page < 1) {
+        ctx.throw(404);
+      }
       const limit = process.env.LINES_PER_PAGE || 10;
       const offset = limit * (page - 1) || 0;
 
@@ -40,7 +43,7 @@ export default (router, { logger }) => {
       const pages = Math.ceil(count / limit);
       log(`Got ${count} records from DB, setting lines per page: ${limit}, count of pages: ${pages}`);
       const navPages = pagination(page, pages, query);
-      if (page < 1 || page > pages) {
+      if (pages > 0 && page > pages) {
         ctx.throw(404);
       }
 
