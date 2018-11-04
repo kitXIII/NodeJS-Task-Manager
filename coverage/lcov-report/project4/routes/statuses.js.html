@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for project4/routes/statuses.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">project4/routes</a> statuses.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">75.86% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>44/58</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">50% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>1/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.89% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>8/9</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">75.44% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>43/57</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line medium'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62x</span>
+<span class="cline-any cline-yes">62x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import buildFormObj from '../lib/formObjectBuilder';
+import { hasChanges, pickFormValues } from '../lib/helpers';
+import { getById, checkSession } from '../lib/routesHelpers';
+import db from '../models';
+&nbsp;
+const { TaskStatus } = db;
+&nbsp;
+export default (router, { logger }) =&gt; {
+  const log = msg =&gt; logger(`Statuses: ${msg}`);
+  router
+    .get('statuses', '/statuses', async (ctx) =&gt; {
+      const statuses = await TaskStatus.findAll();
+      log('Statuses list success');
+      ctx.render('statuses', { statuses });
+    })
+    .get('newStatus', '/statuses/new', (ctx) =&gt; {
+      checkSession(ctx);
+      log('Prepare data for new status form');
+      const status = TaskStatus.build();
+      ctx.render('statuses/new', { f: buildFormObj(status) });
+    })
+    .post('statuses', '/statuses', async (ctx) =&gt; {
+      checkSession(ctx);
+      const { form } = ctx.request.body;
+      log(`Got new tasks status data: ${form.name}`);
+      const status = TaskStatus.build(form);
+      try {
+        await status.validate();
+        log('Validation success');
+        await status.save();
+        log('New satus has been created');
+        ctx.flash.set({ message: 'Satus has been created', type: 'success' });
+        ctx.redirect(router.url('statuses'));
+      } catch (err) {
+<span class="cstat-no" title="statement not covered" >        ctx.status = 422;</span>
+<span class="cstat-no" title="statement not covered" >        ctx.render('statuses/new', { f: buildFormObj(status, err) });</span>
+      }
+    })
+    .get('editStatus', '/statuses/:id/edit', async (ctx) =&gt; {
+      const status = await getById(ctx.params.id, TaskStatus, ctx);
+      checkSession(ctx);
+      ctx.render('statuses/edit', { f: buildFormObj(status) });
+    })
+    .patch('patchStatus', '/statuses/:id', async (ctx) =&gt; {
+      const status = await getById(ctx.params.id, TaskStatus, ctx);
+      checkSession(ctx);
+      const data = pickFormValues(['name'], ctx);
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (!hasChanges(data, status)) {
+<span class="cstat-no" title="statement not covered" >        log(`There was nothing to change satatus with id: ${status.id}`);</span>
+<span class="cstat-no" title="statement not covered" >        ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });</span>
+<span class="cstat-no" title="statement not covered" >        ctx.redirect(router.url('statuses'));</span>
+<span class="cstat-no" title="statement not covered" >        return;</span>
+      }
+      log(`Try to update: ${data.name}`);
+      try {
+        await status.update({ ...data });
+        log(`Update status with id: ${status.id}, is OK`);
+        ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
+        ctx.redirect(router.url('statuses'));
+      } catch (err) {
+<span class="cstat-no" title="statement not covered" >        log(`Patch status with id: ${status.id}, problem: ${err.message}`);</span>
+<span class="cstat-no" title="statement not covered" >        ctx.status = 422;</span>
+<span class="cstat-no" title="statement not covered" >        ctx.render('statuses/edit', { f: buildFormObj(status, err) });</span>
+      }
+    })
+    .delete('deleteStatus', '/statuses/:id', async (ctx) =&gt; {
+      const status = await getById(ctx.params.id, TaskStatus, ctx);
+      checkSession(ctx);
+      log(`Try to delete status with id: ${status.id}`);
+      try {
+        await status.destroy();
+        const message = `Status ${status.name} was removed`;
+        log(message);
+        ctx.flash.set({ message, type: 'info' });
+        ctx.redirect(router.url('statuses'));
+      } catch (err) {
+<span class="cstat-no" title="statement not covered" >        log(`Delete status ${status.name} problem: ${err.message}`);</span>
+<span class="cstat-no" title="statement not covered" >        ctx.flash.set({ message: `Unable to delete item. Maybe exists tasks with status ${status.name}`, type: 'warning' });</span>
+<span class="cstat-no" title="statement not covered" >        ctx.redirect(router.url('statuses'));</span>
+      }
+    })
+    .all('/statuses', <span class="fstat-no" title="function not covered" >(c</span>tx) =&gt; {
+<span class="cstat-no" title="statement not covered" >      log('No such route');</span>
+<span class="cstat-no" title="statement not covered" >      ctx.throw(404);</span>
+    });
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Nov 04 2018 17:34:14 GMT+0400 (GMT+04:00)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for project4/lib/pagination.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">project4/lib</a> pagination.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">68.97% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>20/29</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">40% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>6/15</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">73.33% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>11/15</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">67.86% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>19/28</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line medium'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import _ from 'lodash';
+&nbsp;
+export default (page, pages, queryObj, size = 5) =&gt; {
+  const isShort = length =&gt; length &lt;= size;
+  const offset = Math.ceil(size / 2);
+&nbsp;
+  const getMinMaxIndexes = (current, length) =&gt; {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (isShort(length)) {
+      return { min: 1, max: length };
+    }
+<span class="cstat-no" title="statement not covered" >    if (current &lt;= offset) {</span>
+<span class="cstat-no" title="statement not covered" >      return { min: 1, max: size };</span>
+    }
+<span class="cstat-no" title="statement not covered" >    if (current - offset &gt;= length - size) {</span>
+<span class="cstat-no" title="statement not covered" >      return { min: length - size + 1, max: length };</span>
+    }
+<span class="cstat-no" title="statement not covered" >    return { min: current - offset + 1, max: current - offset + size };</span>
+  };
+&nbsp;
+  const partsGetters = [
+    {
+      condition: (current, length) =&gt; (!isShort(length) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >current &gt; offset)</span>,
+      get: <span class="fstat-no" title="function not covered" >qu</span>ery =&gt; (<span class="cstat-no" title="statement not covered" >{ text: '&lt;&lt;', query: { ...query, page: 1 } })</span>,
+    },
+    {
+      condition: (current, length) =&gt; (!isShort(length) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >current &gt; 1)</span>,
+      get: <span class="fstat-no" title="function not covered" >(q</span>uery, current) =&gt; (<span class="cstat-no" title="statement not covered" >{ text: '&lt;', query: { ...query, page: current - 1 } })</span>,
+    },
+    {
+      condition: () =&gt; true,
+      get: (query, current, length) =&gt; {
+        const indexes = getMinMaxIndexes(current, length);
+        const items = [];
+        for (let i = indexes.min; i &lt;= indexes.max; i += 1) {
+          items.push({ text: `${i}`, query: { ...query, page: i }, active: i === current });
+        }
+        return items;
+      },
+    },
+    {
+      condition: (current, length) =&gt; (!isShort(length) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >current &lt; length)</span>,
+      get: <span class="fstat-no" title="function not covered" >(q</span>uery, current) =&gt; (<span class="cstat-no" title="statement not covered" >{ text: '&gt;', query: { ...query, page: current + 1 } })</span>,
+    },
+    {
+      condition: (current, length) =&gt; (!isShort(length) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >current - offset &lt; length - size)</span>,
+      get: <span class="fstat-no" title="function not covered" >(q</span>uery, current, length) =&gt; (<span class="cstat-no" title="statement not covered" >{ text: '&gt;&gt;', query: { ...query, page: length } })</span>,
+    },
+  ];
+&nbsp;
+  return _.flatten(partsGetters
+    .filter(part =&gt; part.condition(page, pages))
+    .map(part =&gt; part.get(queryObj, page, pages)));
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Nov 04 2018 17:34:14 GMT+0400 (GMT+04:00)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

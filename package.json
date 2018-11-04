@@ -10,6 +10,18 @@
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/**/*test.js"
+    ],
+    "collectCoverage": true,
+    "coverageReporters": [
+      "lcov"
+    ],
+    "collectCoverageFrom": [
+      "lib/**",
+      "models/**",
+      "routes/**",
+      "views/**",
+      "container.js",
+      "index.js"
     ]
   },
   "scripts": {

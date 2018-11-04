@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for project4/routes/tasks.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">project4/routes</a> tasks.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">81.54% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>106/130</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">72.22% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>26/36</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">91.67% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>11/12</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">81.1% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>103/127</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62x</span>
+<span class="cline-any cline-yes">62x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import _ from 'lodash';
+import buildFormObj from '../lib/formObjectBuilder';
+import { getChanges, pickFormValues } from '../lib/helpers';
+import pagination from '../lib/pagination';
+import db from '../models';
+import {
+  checkSession,
+  isValidId,
+  getById,
+  getTagsByNames,
+  stringifyTags,
+  parseTags,
+  cleanTagsByTagNames,
+  listBuilders,
+  prepareTaskScopes,
+} from '../lib/routesHelpers';
+&nbsp;
+const {
+  Task, TaskStatus, User, Tag,
+} = db;
+&nbsp;
+export default (router, { logger }) =&gt; {
+  const log = msg =&gt; logger(`Tasks: ${msg}`);
+  router
+    .get('tasks', '/tasks', async (ctx) =&gt; {
+      const { query } = ctx.request;
+      log(`Got /tasks query: ${JSON.stringify(query)}`);
+&nbsp;
+      const page = Number(query.page) || 1;
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (page &lt; 1) {
+<span class="cstat-no" title="statement not covered" >        ctx.throw(404);</span>
+      }
+      const limit = process.env.LINES_PER_PAGE || <span class="branch-1 cbranch-no" title="branch not covered" >10;</span>
+      const offset = limit * (page - 1) || 0;
+&nbsp;
+      const taskScopeFilters = prepareTaskScopes(query, ctx);
+      log(`Try to get tasks list, use scope filters: ${JSON.stringify(taskScopeFilters)}`);
+      const { count, rows: tasks } = await Task.scope(taskScopeFilters).findAndCountAll({
+        include: ['taskStatus', 'creator', 'assignedTo'],
+        offset,
+        limit,
+        distinct: true,
+      });
+      const pages = Math.ceil(count / limit);
+      log(`Got ${count} records from DB, setting lines per page: ${limit}, count of pages: ${pages}`);
+      const navPages = pagination(page, pages, query);
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (pages &gt; 0 &amp;&amp; page &gt; pages) {
+<span class="cstat-no" title="statement not covered" >        ctx.throw(404);</span>
+      }
+&nbsp;
+      log('Try to get lists for filters');
+      const taskStatuses = await TaskStatus.findAll();
+      const statusList = [{ id: 0, name: 'All' }, ...listBuilders.status(taskStatuses)];
+      const users = await User.findAll();
+      const userList = [{ id: 0, name: 'All' }, ...listBuilders.user(users, 'nameWithEmail')];
+&nbsp;
+      const tags = await Tag.findAll();
+      const tagList = listBuilders.tag(tags, query.tags);
+&nbsp;
+      const f = buildFormObj({
+        myTasksOnly: query.myTasksOnly || false,
+        taskStatusId: query.taskStatusId || 0,
+        assignedToId: query.assignedToId || 0,
+      }, {}, true);
+      ctx.render('tasks', {
+        f, tasks, statusList, userList, tagList, navPages,
+      });
+    })
+    .get('newTask', '/tasks/new', async (ctx) =&gt; {
+      checkSession(ctx);
+      log('Prepare data for new task form');
+      const task = Task.build();
+      task.statusId = 1;
+      task.assignedToId = Number(ctx.state.userId);
+      const taskStatuses = await TaskStatus.findAll();
+      const statusList = listBuilders.status(taskStatuses);
+      const users = await User.findAll();
+      const userList = listBuilders.user(users, 'nameWithEmail');
+      ctx.render('tasks/new', { f: buildFormObj(task), statusList, userList });
+    })
+    .get('task', '/tasks/:id', async (ctx) =&gt; {
+      const task = await getById(ctx.params.id, Task, ctx);
+      log('Task data prepared to view');
+      ctx.render('tasks/task', { task });
+    })
+    .post('tasks', '/tasks', async (ctx) =&gt; {
+      checkSession(ctx);
+      const { form } = ctx.request.body;
+      log(`Got new task data: ${JSON.stringify(form)}`);
+      const user = await getById(ctx.state.userId, User, ctx);
+      await isValidId(form.taskStatusId, TaskStatus, ctx);
+      await isValidId(form.assignedToId, User, ctx);
+      const statusList = listBuilders.status(await TaskStatus.findAll());
+      const userList = listBuilders.user(await User.findAll(), 'nameWithEmail');
+      log('Try to validate new task data');
+      try {
+        const task = await user.createInitializedTask(form);
+        const tags = await getTagsByNames(parseTags(form.tags));
+        await task.setTags(tags);
+        log(`New task ${task.name} has been created`);
+        ctx.flash.set({ message: `Task ${task.name} has been created`, type: 'success' });
+        ctx.redirect(router.url('tasks'));
+      } catch (err) {
+<span class="cstat-no" title="statement not covered" >        ctx.status = 422;</span>
+<span class="cstat-no" title="statement not covered" >        log(`Fail on task creation: ${err.message}`);</span>
+<span class="cstat-no" title="statement not covered" >        ctx.render('tasks/new', { f: buildFormObj(form, err), statusList, userList });</span>
+      }
+    })
+    .get('editTask', '/tasks/:id/edit', async (ctx) =&gt; {
+      const task = await getById(ctx.params.id, Task, ctx);
+      checkSession(ctx);
+      const statusList = listBuilders.status(await TaskStatus.findAll());
+      const userList = listBuilders.user(await User.findAll(), 'nameWithEmail');
+      task.tags = stringifyTags(task.Tags);
+      ctx.render('tasks/edit', { f: buildFormObj(task), statusList, userList });
+    })
+    .patch('patchTask', '/tasks/:id', async (ctx) =&gt; {
+      const task = await getById(ctx.params.id, Task, ctx);
+      task.tags = stringifyTags(task.Tags);
+      checkSession(ctx);
+      const allowedFields = ['name', 'description', 'taskStatusId', 'assignedToId', 'tags'];
+      const pickedFormData = pickFormValues(allowedFields, ctx);
+      const changes = getChanges(pickedFormData, task);
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (_.isEmpty(changes)) {
+<span class="cstat-no" title="statement not covered" >        log(`There was nothing to change task with id: ${task.id}`);</span>
+<span class="cstat-no" title="statement not covered" >        ctx.flash.set({ message: 'There was nothing to change', type: 'secondary' });</span>
+<span class="cstat-no" title="statement not covered" >        ctx.redirect(router.url('task', task.id));</span>
+<span class="cstat-no" title="statement not covered" >        return;</span>
+      }
+      log(`Task with id: ${task.id} changes: ${JSON.stringify(changes)}`);
+      if (changes.taskStatusId) {
+        await isValidId(changes.taskStatusId, TaskStatus, ctx);
+      }
+      if (changes.assignedToId) {
+        await isValidId(changes.assignedToId, User, ctx);
+      }
+      const currentTagsNames = task.Tags.map(tag =&gt; tag.name);
+      const recivedTagsNames = changes.tags ? parseTags(changes.tags) : [];
+      const removedTagsNames = _.difference(currentTagsNames, recivedTagsNames);
+&nbsp;
+      const statusList = listBuilders.status(await TaskStatus.findAll());
+      const userList = listBuilders.user(await User.findAll(), 'nameWithEmail');
+      log(`Try to update task with id: ${task.id}`);
+      try {
+        await task.update({ ...changes });
+        log(`Try to get recived tags of changed task with id: ${task.id}`);
+        const tags = await getTagsByNames(recivedTagsNames);
+        log(`Try to set tags of task with id: ${task.id}`);
+        await task.setTags(tags);
+        log(`Update task with id: ${task.id}, is OK`);
+        ctx.flash.set({ message: 'Your data has been updated', type: 'success' });
+        ctx.redirect(router.url('task', task.id));
+      } catch (err) {
+<span class="cstat-no" title="statement not covered" >        log(`Patch task with id: ${task.id}, problem: ${err.message}`);</span>
+<span class="cstat-no" title="statement not covered" >        ctx.task = 422;</span>
+<span class="cstat-no" title="statement not covered" >        if (changes.tags) {</span>
+<span class="cstat-no" title="statement not covered" >          task.tags = changes.tags;</span>
+        }
+<span class="cstat-no" title="statement not covered" >        if (changes.taskStatusId) {</span>
+<span class="cstat-no" title="statement not covered" >          task.taskStatusId = changes.taskStatusId;</span>
+        }
+<span class="cstat-no" title="statement not covered" >        if (changes.assignedToId) {</span>
+<span class="cstat-no" title="statement not covered" >          task.assignedToId = changes.assignedToId;</span>
+        }
+<span class="cstat-no" title="statement not covered" >        log(`Task with id: ${task.id} changes: ${JSON.stringify(task)}`);</span>
+<span class="cstat-no" title="statement not covered" >        ctx.render('tasks/edit', { f: buildFormObj(task, err), statusList, userList });</span>
+      }
+      if (!_.isEmpty(removedTagsNames)) {
+        log('Some tags have been removed, trying to clean the Tags table from entries with empty Task links');
+        await cleanTagsByTagNames(removedTagsNames);
+      }
+    })
+    .delete('deleteTask', '/tasks/:id', async (ctx) =&gt; {
+      const task = await getById(ctx.params.id, Task, ctx);
+      const removedTagsNames = task.Tags.map(tag =&gt; tag.name);
+      checkSession(ctx);
+      log(`Try to delete task with id: ${task.id}`);
+      try {
+        await task.destroy();
+        const message = `Task #${task.id} ${task.name} was removed`;
+        log(message);
+        ctx.flash.set({ message, type: 'info' });
+        ctx.redirect(router.url('tasks'));
+      } catch (err) {
+<span class="cstat-no" title="statement not covered" >        log(`Delete task with id: ${task.id} problem: ${err.message}`);</span>
+<span class="cstat-no" title="statement not covered" >        ctx.flash.set({ message: `Unable to delete task ${task.name}`, type: 'warning' });</span>
+<span class="cstat-no" title="statement not covered" >        ctx.redirect(router.url('tasks'));</span>
+      }
+      if (!_.isEmpty(removedTagsNames)) {
+        log('Some tags have been removed, trying to clean the Tags table from entries with empty Task links');
+        await cleanTagsByTagNames(removedTagsNames);
+      }
+    })
+    .all('/tasks', <span class="fstat-no" title="function not covered" >(c</span>tx) =&gt; {
+<span class="cstat-no" title="statement not covered" >      log('No such route');</span>
+<span class="cstat-no" title="statement not covered" >      ctx.throw(404);</span>
+    });
+};
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sun Nov 04 2018 17:34:14 GMT+0400 (GMT+04:00)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>
