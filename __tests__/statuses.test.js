@@ -5,6 +5,7 @@ import app from '..';
 import db from '../models';
 
 import { getFakeUser, getFakeStatus } from './lib/helpers';
+import getCookie from './lib/authUser';
 
 const { sequelize, User, TaskStatus } = db;
 
@@ -81,12 +82,7 @@ describe('Authorized requests', () => {
 
   beforeEach(async () => {
     server = app().listen();
-    const { email, password } = user;
-    const res = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(res).toHaveHTTPStatus(302);
-    cookie = res.headers['set-cookie'];
+    cookie = await getCookie(server, user);
   });
 
   afterEach((done) => {

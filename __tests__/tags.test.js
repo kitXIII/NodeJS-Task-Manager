@@ -8,6 +8,8 @@ import {
   getFakeUser, getFakeTask, getFakeTaskTags,
 } from './lib/helpers';
 
+import getCookie from './lib/authUser';
+
 const {
   sequelize, User, Tag, Task,
 } = db;
@@ -20,12 +22,8 @@ beforeAll(async () => {
 describe('Create tags', () => {
   it('POST /tasks | put tags into DB', async () => {
     const server = app().listen();
-    const { email, password } = await User.create(getFakeUser());
-    const resUser = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(resUser).toHaveHTTPStatus(302);
-    const cookie = resUser.headers['set-cookie'];
+    const user = await User.create(getFakeUser());
+    const cookie = await getCookie(server, user);
 
     const someTask = await getFakeTask();
     const tags = getFakeTaskTags(3);
@@ -62,7 +60,6 @@ describe('Change Tags', () => {
   });
 
   beforeEach(async () => {
-    const { email, password } = user;
     const someTask = await getFakeTask();
     task = await Task.create(someTask);
     const tagNames = getFakeTaskTags(3);
@@ -70,12 +67,7 @@ describe('Change Tags', () => {
       .then(results => results.filter(v => v));
     await task.setTags(tags);
     server = app().listen();
-
-    const res = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(res).toHaveHTTPStatus(302);
-    cookie = res.headers['set-cookie'];
+    cookie = await getCookie(server, user);
   });
 
   afterEach((done) => {

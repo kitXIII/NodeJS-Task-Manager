@@ -5,9 +5,10 @@ import _ from 'lodash';
 import app from '..';
 import db from '../models';
 
-import { getFakeUser, getFakeTask, getFakeTaskParts } from './lib/helpers';
+import { getFakeTask, getFakeTaskParts, getFakeUser } from './lib/helpers';
+import getCookie from './lib/authUser';
 
-const { sequelize, User, Task } = db;
+const { sequelize, Task, User } = db;
 
 beforeAll(async () => {
   await sequelize.sync({ force: 'true' });
@@ -90,12 +91,7 @@ describe('Authorized requests', () => {
 
   beforeEach(async () => {
     server = app().listen();
-    const { email, password } = user;
-    const res = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(res).toHaveHTTPStatus(302);
-    cookie = res.headers['set-cookie'];
+    cookie = await getCookie(server, user);
   });
 
   afterEach((done) => {

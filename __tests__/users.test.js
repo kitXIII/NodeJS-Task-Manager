@@ -5,6 +5,7 @@ import faker from 'faker';
 import app from '..';
 import db from '../models';
 import encrypt from '../lib/secure';
+import getCookie from './lib/authUser';
 
 import { getFakeUser } from './lib/helpers';
 
@@ -108,51 +109,36 @@ describe('Users requests', () => {
 describe('Users get edit form page', () => {
   let server;
   let user;
-  let userFromDB;
+  let cookie;
 
   beforeAll(async () => {
-    user = getFakeUser();
-    userFromDB = await User.create(user);
+    user = await User.create(getFakeUser());
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     server = app().listen();
+    cookie = await getCookie(server, user);
   });
 
   it('GET /users/:id/edit', async () => {
-    const { email, password } = user;
-    const postRes = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(postRes).toHaveHTTPStatus(302);
-    const cookie = postRes.headers['set-cookie'];
-
-    const getRes = await request.agent(server)
-      .get(`/users/${userFromDB.id}/edit`)
+    const res = await request.agent(server)
+      .get(`/users/${user.id}/edit`)
       .set('Cookie', cookie);
-    expect(getRes).toHaveHTTPStatus(200);
+    expect(res).toHaveHTTPStatus(200);
   });
 
   it('GET /users/:id/edit (fails without autority)', async () => {
     const res = await request.agent(server)
-      .get(`/users/${userFromDB.id}/edit`);
+      .get(`/users/${user.id}/edit`);
     expect(res).toHaveHTTPStatus(401);
   });
 
   it('GET /users/:id/edit (fails with autority, another user)', async () => {
-    const someUser = getFakeUser();
-    await User.create(someUser);
-    const { email, password } = someUser;
-    const postRes = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(postRes).toHaveHTTPStatus(302);
-    const cookie = postRes.headers['set-cookie'];
-
-    const getRes = await request.agent(server)
+    const newUser = await User.create(getFakeUser());
+    const res = await request.agent(server)
       .set('Cookie', cookie)
-      .get(`/users/${userFromDB.id}/edit`);
-    expect(getRes).toHaveHTTPStatus(401);
+      .get(`/users/${newUser.id}/edit`);
+    expect(res).toHaveHTTPStatus(401);
   });
 
   afterEach((done) => {
@@ -164,51 +150,36 @@ describe('Users get edit form page', () => {
 describe('Users get change password form', () => {
   let server;
   let user;
-  let userFromDB;
+  let cookie;
 
   beforeAll(async () => {
-    user = getFakeUser();
-    userFromDB = await User.create(user);
+    user = await User.create(getFakeUser());
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     server = app().listen();
+    cookie = await getCookie(server, user);
   });
 
   it('GET /users/:id/password/edit', async () => {
-    const { email, password } = user;
-    const postRes = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(postRes).toHaveHTTPStatus(302);
-    const cookie = postRes.headers['set-cookie'];
-
     const getRes = await request.agent(server)
-      .get(`/users/${userFromDB.id}/password/edit`)
+      .get(`/users/${user.id}/password/edit`)
       .set('Cookie', cookie);
     expect(getRes).toHaveHTTPStatus(200);
   });
 
   it('GET /users/:id/password/edit (fails without autority)', async () => {
     const res = await request.agent(server)
-      .get(`/users/${userFromDB.id}/password/edit`);
+      .get(`/users/${user.id}/password/edit`);
     expect(res).toHaveHTTPStatus(401);
   });
 
   it('GET /users/:id/password/edit (fails with someone else authorization)', async () => {
-    const someUser = getFakeUser();
-    await User.create(someUser);
-    const { email, password } = someUser;
-    const postRes = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(postRes).toHaveHTTPStatus(302);
-    const cookie = postRes.headers['set-cookie'];
-
-    const getRes = await request.agent(server)
+    const newUser = await User.create(getFakeUser());
+    const res = await request.agent(server)
       .set('Cookie', cookie)
-      .get(`/users/${userFromDB.id}/password/edit`);
-    expect(getRes).toHaveHTTPStatus(401);
+      .get(`/users/${newUser.id}/password/edit`);
+    expect(res).toHaveHTTPStatus(401);
   });
 
   afterEach((done) => {
@@ -220,7 +191,6 @@ describe('Users get change password form', () => {
 describe('Users updade requests', () => {
   let server;
   let user;
-  let userFromDB;
   let cookie;
 
   let currentPassword;
@@ -229,67 +199,34 @@ describe('Users updade requests', () => {
 
   beforeEach(async () => {
     server = app().listen();
-    user = getFakeUser();
-    userFromDB = await User.create(user);
-    currentPassword = userFromDB.password;
-    const res = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email: user.email, password: user.password } });
-    cookie = res.headers['set-cookie'];
+    user = await User.create(getFakeUser());
+    currentPassword = user.password;
+    cookie = await getCookie(server, user);
   });
 
-  it('PATCH /users/:id (firstName, lastName)', async () => {
-    const { firstName, lastName } = getFakeUser();
-
+  it('PATCH /users/:id (firstName, lastName, email)', async () => {
+    const { firstName, lastName, email } = getFakeUser();
     const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}`)
+      .patch(`/users/${user.id}`)
       .set('Cookie', cookie)
-      .send({ form: { firstName, lastName, password: 'okmIJN89' } });
+      .send({ form: { firstName, lastName, email } });
     expect(res).toHaveHTTPStatus(302);
 
-    const patchedUserFromDB = await User.findOne({
-      where: {
-        email: user.email,
-      },
-    });
+    const patchedUserFromDB = await User.findById(user.id);
 
     expect(patchedUserFromDB.firstName).toBe(firstName);
     expect(patchedUserFromDB.lastName).toBe(lastName);
-    expect(patchedUserFromDB.passwordDigest).toBe(userFromDB.passwordDigest);
-    expect(patchedUserFromDB.email).toBe(userFromDB.email);
-  });
-
-  it('PATCH /users/:id (email)', async () => {
-    const { email } = getFakeUser();
-
-    const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}`)
-      .set('Cookie', cookie)
-      .send({ form: { email } });
-    expect(res).toHaveHTTPStatus(302);
-
-    const patchedUserFromDB = await User.findOne({
-      where: {
-        id: userFromDB.id,
-      },
-    });
-
     expect(patchedUserFromDB.email).toBe(email);
   });
 
   it('PATCH /users/:id/password', async () => {
     const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}/password`)
+      .patch(`/users/${user.id}/password`)
       .set('Cookie', cookie)
       .send({ form: { currentPassword, password, confirmPassword } });
     expect(res).toHaveHTTPStatus(302);
 
-    const patchedUserFromDB = await User.findOne({
-      where: {
-        id: userFromDB.id,
-      },
-    });
-
+    const patchedUserFromDB = await User.findById(user.id);
     expect(patchedUserFromDB.passwordDigest).toBe(encrypt(password));
   });
 
@@ -300,16 +237,11 @@ describe('Users updade requests', () => {
     expect(delSessionRes).toHaveHTTPStatus(302);
 
     const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}/password`)
+      .patch(`/users/${user.id}/password`)
       .send({ form: { currentPassword, password, confirmPassword } });
     expect(res).toHaveHTTPStatus(401);
 
-    const patchedUserFromDB = await User.findOne({
-      where: {
-        id: userFromDB.id,
-      },
-    });
-
+    const patchedUserFromDB = await User.findById(user.id);
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
   });
 
@@ -325,23 +257,18 @@ describe('Users updade requests', () => {
 
   it('PATCH /users/:id/password (fails with wrong current password', async () => {
     const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}/password`)
+      .patch(`/users/${user.id}/password`)
       .set('Cookie', cookie)
       .send({ form: { currentPassword: '123wronG', password, confirmPassword } });
     expect(res).toHaveHTTPStatus(422);
 
-    const patchedUserFromDB = await User.findOne({
-      where: {
-        id: userFromDB.id,
-      },
-    });
-
+    const patchedUserFromDB = await User.findById(user.id);
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
   });
 
   it('PATCH /users/:id/password (fails with wrong confirm password', async () => {
     const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}/password`)
+      .patch(`/users/${user.id}/password`)
       .set('Cookie', cookie)
       .send({ form: { currentPassword, password, confirmPassword: '123wronG' } });
     expect(res).toHaveHTTPStatus(422);
@@ -349,7 +276,7 @@ describe('Users updade requests', () => {
 
   it('PATCH /users/:id/password (fails without confirm password', async () => {
     const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}/password`)
+      .patch(`/users/${user.id}/password`)
       .set('Cookie', cookie)
       .send({ form: { currentPassword, password } });
     expect(res).toHaveHTTPStatus(422);
@@ -357,17 +284,12 @@ describe('Users updade requests', () => {
 
   it('PATCH /users/:id/password (fails with easy password', async () => {
     const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}/password`)
+      .patch(`/users/${user.id}/password`)
       .set('Cookie', cookie)
       .send({ form: { currentPassword, password: '123abc', confirmPassword: '123abc' } });
     expect(res).toHaveHTTPStatus(422);
 
-    const patchedUserFromDB = await User.findOne({
-      where: {
-        id: userFromDB.id,
-      },
-    });
-
+    const patchedUserFromDB = await User.findById(user.id);
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
   });
 
@@ -375,19 +297,15 @@ describe('Users updade requests', () => {
     const { lastName } = getFakeUser();
 
     const res = await request.agent(server)
-      .patch(`/users/${userFromDB.id}`)
+      .patch(`/users/${user.id}`)
       .set('Cookie', cookie)
       .send({ form: { firstName: '', lastName } });
     expect(res).toHaveHTTPStatus(422);
 
-    const patchedUserFromDB = await User.findOne({
-      where: {
-        email: user.email,
-      },
-    });
+    const patchedUserFromDB = await User.findById(user.id);
 
-    expect(patchedUserFromDB.firstName).toBe(userFromDB.firstName);
-    expect(patchedUserFromDB.lastName).toBe(userFromDB.lastName);
+    expect(patchedUserFromDB.firstName).toBe(user.firstName);
+    expect(patchedUserFromDB.lastName).toBe(user.lastName);
   });
 
   afterEach((done) => {
@@ -404,43 +322,33 @@ describe('Users delete requests', () => {
   });
 
   it('DELETE /users/:id', async () => {
-    const user = getFakeUser();
-    const userFromDB = await User.create(user);
-    const { email, password } = user;
+    const user = await User.create(getFakeUser());
+    const cookie = await getCookie(server, user);
     const res = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(res).toHaveHTTPStatus(302);
-    const cookie = res.headers['set-cookie'];
-
-    const delRes = await request.agent(server)
-      .delete(`/users/${userFromDB.id}`)
+      .delete(`/users/${user.id}`)
       .set('Cookie', cookie);
-    expect(delRes).toHaveHTTPStatus(302);
+    expect(res).toHaveHTTPStatus(302);
+
+    const deletedUser = await User.findById(user.id);
+    expect(deletedUser).toBeNull();
   });
 
   it('DELETE /users/:id (fails without autority)', async () => {
-    const userFromDB = await User.create(getFakeUser());
+    const user = await User.create(getFakeUser());
     const res = await request.agent(server)
-      .delete(`/users/${userFromDB.id}`);
+      .delete(`/users/${user.id}`);
     expect(res).toHaveHTTPStatus(401);
   });
 
   it('DELETE /users/:id (fails with someone else authorization)', async () => {
-    const user = getFakeUser();
-    await User.create(user);
-    const { email, password } = user;
-    const res = await request.agent(server)
-      .post('/sessions')
-      .send({ form: { email, password } });
-    expect(res).toHaveHTTPStatus(302);
-    const cookie = res.headers['set-cookie'];
+    const user = await User.create(getFakeUser());
+    const cookie = await getCookie(server, user);
 
-    const newUserFromDB = await User.create(getFakeUser());
-    const delRes = await request.agent(server)
+    const newUser = await User.create(getFakeUser());
+    const res = await request.agent(server)
       .set('Cookie', cookie)
-      .delete(`/users/${newUserFromDB.id}`);
-    expect(delRes).toHaveHTTPStatus(401);
+      .delete(`/users/${newUser.id}`);
+    expect(res).toHaveHTTPStatus(401);
   });
 
   afterEach((done) => {
