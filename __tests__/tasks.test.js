@@ -5,28 +5,9 @@ import _ from 'lodash';
 import app from '..';
 import db from '../models';
 
-import { getFakeUser, getFakeStatus, getFakeTaskParts } from './lib/helpers';
+import { getFakeUser, getFakeTask, getFakeTaskParts } from './lib/helpers';
 
-const {
-  sequelize,
-  User,
-  Task,
-  TaskStatus,
-} = db;
-
-const getFakeTask = async () => {
-  const { id: taskStatusId } = await TaskStatus.create(getFakeStatus());
-  const { id: creatorId } = await User.create(getFakeUser());
-  const { id: assignedToId } = await User.create(getFakeUser());
-  const fakeParts = getFakeTaskParts();
-  return {
-    ...fakeParts,
-    taskStatusId,
-    creatorId,
-    assignedToId,
-    tags: '',
-  };
-};
+const { sequelize, User, Task } = db;
 
 beforeAll(async () => {
   await sequelize.sync({ force: 'true' });
@@ -205,11 +186,7 @@ describe('Authorized requests', () => {
       .set('Cookie', cookie);
     expect(res).toHaveHTTPStatus(302);
 
-    const deletedTaskFromDB = await Task.findOne({
-      where: {
-        id: taskFromDB.id,
-      },
-    });
+    const deletedTaskFromDB = await Task.findById(taskFromDB.id);
     expect(deletedTaskFromDB).toBeNull();
   });
 });
