@@ -2,47 +2,39 @@ extends ../layouts/application.pug
 include ../mixins/deletionModal.pug
 
 block content
-  table.table.table-stripped
-    tbody
-      tr
-        td
-          strong #
-        td= task.id
-      tr
-        td
-          strong Name
-        td= task.name
-      tr
-        td
-          strong Description
-        td= task.description
-      tr
-        td
-          strong Status
-        td= task.taskStatus.name
-      tr
-        td
-          strong Creator
-        td= task.creator.fullName
-      tr
-        td
-          strong Assigned to
-        td= task.assignedTo.fullName
-      tr
-        td
-          strong Tags
-        td
-          each tag in task.Tags
-            .badge.badge-primary= tag.name
-      tr
-        td 
-          strong Created at
-        td= task.created
-      tr
-        td 
-          strong Updated at
-        td= task.updated
-      
+  .table-responsive-sm
+    table.table.table-stripped
+      tbody
+        tr
+          th #
+          td= task.id
+        tr
+          th Name
+          td= task.name
+        tr
+          th Description
+          td= task.description
+        tr
+          th Status
+          td= task.taskStatus.name
+        tr
+          th Creator
+          td= task.creator.fullName
+        tr
+          th Assigned to
+          td= task.assignedTo.fullName
+        tr
+          th Tags
+          td
+            each tag in task.Tags
+              .badge.badge-primary= tag.name
+        tr
+          th Created at
+          td= task.created
+        tr
+          th Updated at
+          td= task.updated
+
   if isSignedIn()
     .d-flex
       a.btn.btn-info.mr-2(href=urlFor('editTask', task.id) data-tooltip='true' data-placement='bottom' title='Edit')

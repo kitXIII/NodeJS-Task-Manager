@@ -2,17 +2,19 @@ extends ../layouts/application.pug
 include ../mixins/pagination.pug
 
 block content
-  table.table.table-stripped
-    thead
-      tr
-        th Full Name
-        th Email
-        th Created at
-    tbody
-      each user in users
-        tr
-          td
-            a(href=urlFor('user', user.id))= user.fullName
-          td= user.email
-          td= user.created
+  .table-responsive-sm
+    table.table.table-stripped
+      caption List of users
+      thead
+        t1r
+          th Full Name
+          th Email
+          th.d-none.d-sm-table-cell(scope='col') Created at
+      tbody
+        each user in users
+          tr
+            td
+              a(href=urlFor('user', user.id))= user.fullName
+            td= user.email
+            td.d-none.d-sm-table-cell= user.created
   +pagination({ items: navPages, route: 'users' })

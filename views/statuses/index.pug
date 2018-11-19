@@ -2,28 +2,30 @@ extends ../layouts/application.pug
 include ../mixins/deletionModal.pug
 
 block content
-  table.table.table-stripped
-    thead
-      tr
-        th Name
-        th.d-none.d-md-table-cell Created at
-        th
-    tbody
-      each status in statuses
+  .table-responsive-sm
+    table.table.table-stripped
+      caption List of statuses
+      thead
         tr
-          td= status.name
-          td.d-none.d-md-table-cell= status.created
-          td
-            if isSignedIn()
-              a.text-info.mr-3(href=urlFor('editStatus', status.id) data-tooltip='true' data-placement='bottom' title='Edit   status')
-                i.fas.fa-pen
-              a.text-danger(data-toggle='modal' data-target=`#deleteStatusModal${status.id}` data-tooltip='true'  data-placement='bottom' title='Delete status')
-                i.fas.fa-trash-alt
-              +deletionModal({ 
-                id:`deleteStatusModal${status.id}`,
-                message: `Are you sure you want to delete status ${status.name}?`,
-                link: urlFor('deleteStatus', status.id),
-              })
+          th Name
+          th.d-none.d-sm-table-cell Created at
+          th
+      tbody
+        each status in statuses
+          tr
+            td= status.name
+            td.d-none.d-sm-table-cell= status.created
+            td
+              if isSignedIn()
+                a.text-info.mr-3(href=urlFor('editStatus', status.id) data-tooltip='true' data-placement='bottom'   title='Edit   status')
+                  i.fas.fa-pen
+                a.text-danger(data-toggle='modal' data-target=`#deleteStatusModal${status.id}` data-tooltip='true'    data-placement='bottom' title='Delete status')
+                  i.fas.fa-trash-alt
+                +deletionModal({ 
+                  id:`deleteStatusModal${status.id}`,
+                  message: `Are you sure you want to delete status ${status.name}?`,
+                  link: urlFor('deleteStatus', status.id),
+                })
   if isSignedIn()          
     .d-flex
       a.btn.btn-success(href=urlFor('newStatus') data-tooltip='true' data-placement='bottom' title='Add new status')
