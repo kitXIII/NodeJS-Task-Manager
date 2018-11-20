@@ -5,7 +5,7 @@ block content
   div
     +formFor(f, { url: urlFor('tasks'), classList: ['form', 'd-flex', 'flex-column', 'flex-md-row', 'align-items-md-center', 'justify-content-md-end', 'mb-2', 'mb-md-0'] })
       .col-md-2.mt-md-3.px-0.px-md-2
-        if isSignedIn() || true
+        if isSignedIn()
           .form-check.d-flex.d-md-block.align-items-baseline.mb-2.mb-md-0.offset-4.offset-md-0
             - const checked = f.object.myTasksOnly === 'on'
             if checked
@@ -40,7 +40,7 @@ block content
           th Task
           th Status
           th Creator
-          th Assigned to
+          th Assigned&nbspto
           th Updated
           th
       tbody
