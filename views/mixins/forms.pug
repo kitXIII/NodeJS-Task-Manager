@@ -31,7 +31,7 @@ mixin select(f, property, options = { list: [] })
   - const value = f.object[property] === undefined ? 0 : f.object[property]
   - const FGClassList = _.get(options, 'formGroupClassList', '')
   - const formGroupClassList = `${_.isArray(FGClassList) ? FGClassList.join(' ') : FGClassList}${f.errors[property] ? ' has-danger' : ''}`
-  - const inputClassList = _.get(options, 'inputClassList', '')
+  - const inputClassList = _.get(options, 'inputClassList', 'custom-select') 
   - const labelClassList = _.get(options, 'labelClassList', '')
   .form-group(class=formGroupClassList)
     - const preparedLabel = `${_.upperFirst(_.lowerCase(property)).split(' ').filter(i => i !== 'id').join(' ')}:`

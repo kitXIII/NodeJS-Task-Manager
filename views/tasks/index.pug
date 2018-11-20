@@ -3,30 +3,30 @@ include ../mixins/deletionModal.pug
 include ../mixins/pagination.pug
 block content
   div
-    +formFor(f, { url: urlFor('tasks'), classList: ['form', 'd-flex', 'flex-column', 'flex-md-row', 'align-items-md-center', 'justify-content-md-around', 'mb-2', 'mb-md-0'] })
-      .col-md-2.mt-md-3.px-0
+    +formFor(f, { url: urlFor('tasks'), classList: ['form', 'd-flex', 'flex-column', 'flex-md-row', 'align-items-md-center', 'justify-content-md-end', 'mb-2', 'mb-md-0'] })
+      .col-md-2.mt-md-3.px-0.px-md-2
         if isSignedIn() || true
-          .form-check.d-flex.align-items-baseline.mb-2.offset-4.mb-md-0.d-md-block
+          .form-check.d-flex.d-md-block.align-items-baseline.mb-2.mb-md-0.offset-4.offset-md-0
             - const checked = f.object.myTasksOnly === 'on'
             if checked
               input#filterFormMyTasks.form-check-input(type='checkbox' name='myTasksOnly' checked)
             else
               input#filterFormMyTasks.form-check-input(type='checkbox' name='myTasksOnly')
             label.form-check-label(for='filterFormMyTasks') My tasks only
-      .col-md-2.px-0
-        +select(f, 'taskStatusId', { list: statusList, formGroupClassList: 'd-flex d-md-block', labelClassList: 'col-4 col-form-label', inputClassList: 'custom-select col-8' })
-      .col-md-3.px-0
-        +select(f, 'assignedToId', { list: statusList, formGroupClassList: 'd-flex d-md-block', labelClassList: 'col-4 col-form-label', inputClassList: 'custom-select col-8' })
-      .col-md-3.px-0
+      .col-md-2.px-0.px-md-2
+        +select(f, 'taskStatusId', { list: statusList, formGroupClassList: 'd-flex d-md-block', labelClassList: 'col-4 col-md-auto col-form-label px-md-0 pt-md-0', inputClassList: 'custom-select col-8 col-md-auto' })
+      .col-md-3.px-0.px-md-2
+        +select(f, 'assignedToId', { list: userList, formGroupClassList: 'd-flex d-md-block', labelClassList: 'col-4 col-md-auto col-form-label px-md-0 pt-md-0', inputClassList: 'custom-select col-8 col-md-auto' })
+      .col-md-3.px-0.px-md-2
         .form-group.d-flex.align-items-baseline.d-md-block
-          label.col-4.col-form-label.d-md-block Tags:
+          label.col-4.col-md-auto.col-form-label.d-md-block.px-md-0.pt-md-0 Tags:
           select.form-control#tagsMultiSelect(name='tags', multiple='multiple')
             each item in tagList
               if item.selected
                 option(value=item.id selected)= item.name
               else
                 option(value=item.id)= item.name
-      .col-md-2.mt-md-3.d-flex.justify-content-end.d-md-block.px-0
+      .mt-md-3.d-flex.justify-content-end.d-md-block.px-0.pl-md-2
         button.btn.btn-outline-primary.btn-sm.mr-2(type='submit' data-tooltip='true' data-placement='bottom' title='Apply filter')
           i.fas.fa-filter
         a.btn.btn-outline-secondary.btn-sm(href=urlFor('tasks') data-tooltip='true' data-placement='bottom' title='Clear filter')

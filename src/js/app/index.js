@@ -15,7 +15,7 @@ export default () => {
       dropDown: true,
       maxHeight: 300,
       buttonClass: 'form-control d-flex align-items-center justify-content-between text-truncate',
-      buttonContainer: '<div class="col-8 px-0"><div/>',
+      buttonContainer: '<div class="col-8 col-md-auto px-0"><div/>',
       templates: {
         filter: '<li class="multiselect-item filter"><div class="input-group px-1 mb-2"><input class="form-control multiselect-search" type="text"></div></li>',
         filterClearBtn: '<div class="input-group-append"><button class="multiselect-clear-filter btn btn-secondary" type="button"><i class="fas fa-times"></i></button>',
