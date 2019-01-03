@@ -10,6 +10,7 @@ const { sequelize, User } = db;
 
 beforeAll(async () => {
   await sequelize.sync({ force: 'true' });
+  // eslint-disable-next-line jest/no-jasmine-globals
   jasmine.addMatchers(matchers);
 });
 

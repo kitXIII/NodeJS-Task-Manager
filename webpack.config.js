@@ -1,7 +1,9 @@
 import webpack from 'webpack';
 import autoprefixer from 'autoprefixer';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import cssnano from 'cssnano';
 
+const mode = process.env.NODE_ENV || 'development';
 const devMode = process.env.NODE_ENV !== 'production';
 
 export default {
@@ -15,8 +17,13 @@ export default {
     rules: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
         exclude: '/node_modules/',
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+          },
+        },
       },
       {
         test: /\.min\.css$/,
@@ -40,14 +47,12 @@ export default {
           MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
-            options: {
-              minimize: true,
-            },
           }, {
             loader: 'postcss-loader',
             options: {
               plugins: [
                 autoprefixer,
+                cssnano,
               ],
             },
           },
@@ -68,4 +73,5 @@ export default {
     }),
   ],
   devtool: devMode && 'eval-sourcemap',
+  mode,
 };
