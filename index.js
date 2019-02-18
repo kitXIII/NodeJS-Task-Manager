@@ -35,6 +35,7 @@ export default () => {
   app.use(async (ctx, next) => {
     try {
       logger('Koa start');
+      rollbar.info(`Request from ip: ${ctx.request.ip}`);
       await next();
       const status = ctx.status || 404;
       logger(`Koa finish, status: ${status}`);
