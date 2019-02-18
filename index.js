@@ -35,7 +35,11 @@ export default () => {
   app.use(async (ctx, next) => {
     try {
       logger('Koa start');
-      rollbar.info(`Request from ip: ${ctx.request.ip}`);
+      if (process.env.NODE_ENV === 'production') {
+        const ipAddrs = ctx.req.headers['x-forwarded-for'];
+        const ipAddr = ipAddrs ? _.last(ipAddrs.split(',')) : ctx.req.ip;
+        rollbar.info(`Request from ip: ${ipAddr}`);
+      }
       await next();
       const status = ctx.status || 404;
       logger(`Koa finish, status: ${status}`);
