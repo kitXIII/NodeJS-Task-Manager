@@ -1,5 +1,6 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
+import Sequelize from 'sequelize';
 
 import app from '..';
 import db from '../models';
@@ -77,8 +78,9 @@ describe('Change Tags', () => {
   });
 
   it('PATCH /tasks | put new tags into DB', async () => {
-    const especialyTag = await Tag.create({ name: 'EspecialyTagNameForTestRemovingFromDB_1' });
-    await task.addTag(especialyTag);
+    const especiallyTag = await Tag.create({ name: 'EspecialLyTagNameForTestRemovingFromDB_1' });
+    await task.addTag(especiallyTag);
+    console.log('!!!', task);
     const newTagsNames = getFakeTaskTags(3);
     const res = await request.agent(server)
       .patch(`/tasks/${task.id}`)
@@ -88,25 +90,24 @@ describe('Change Tags', () => {
 
     const tagsFromDB = await task.getTags();
     expect(tagsFromDB.map(tag => tag.name).sort()).toEqual(newTagsNames.sort());
-
-    const tagFromDB = await Tag.findById(especialyTag.id);
+    const tagFromDB = await Tag.findByPk(especiallyTag.id);
     expect(tagFromDB).toBeNull();
   });
 
   it('DELETE /tasks/:id | remove tags from DB', async () => {
-    const especialyTag = await Tag.create({ name: 'EspecialyTagNameForTestRemovingFromDB_2' });
-    await task.addTag(especialyTag);
+    const especiallyTag = await Tag.create({name: 'EspeciallyTagNameForTestRemovingFromDB_2'});
+    await task.addTag(especiallyTag);
     const res = await request.agent(server)
       .delete(`/tasks/${task.id}`)
       .set('Cookie', cookie);
     expect(res).toHaveHTTPStatus(302);
 
-    const tagFromDB = await Tag.findById(especialyTag.id);
+    const tagFromDB = await Tag.findByPk(especiallyTag.id);
     expect(tagFromDB).toBeNull();
   });
 
   it('DELETE /tasks/:id | not remove tag from DB if it use', async () => {
-    const especialyTag = await Tag.create({ name: 'EspecialyTagNameForTestRemovingFromDB_3' });
+    const especialyTag = await Tag.create({ name: 'EspeciallyTagNameForTestRemovingFromDB_3' });
     const someTask = await getFakeTask();
     const task2 = await Task.create(someTask);
     await task2.setTags(tags);
@@ -121,7 +122,7 @@ describe('Change Tags', () => {
     const tagsFromDB = await Tag.findAll({
       where: {
         id: {
-          [sequelize.Op.in]: tagIds,
+          [Sequelize.Op.in]: tagIds,
         },
       },
     });
@@ -129,7 +130,7 @@ describe('Change Tags', () => {
     const tagsNamesFromDB = tagsFromDB.map(tag => tag.name);
     expect(tagsNamesFromDB.sort()).toEqual(tagsNames.sort());
 
-    const tagFromDB = await Tag.findById(especialyTag.id);
+    const tagFromDB = await Tag.findByPk(especialyTag.id);
     expect(tagFromDB).toBeNull();
   });
 });

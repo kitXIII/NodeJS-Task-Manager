@@ -213,7 +213,7 @@ describe('Users updade requests', () => {
       .send({ form: { firstName, lastName, email } });
     expect(res).toHaveHTTPStatus(302);
 
-    const patchedUserFromDB = await User.findById(user.id);
+    const patchedUserFromDB = await User.findByPk(user.id);
 
     expect(patchedUserFromDB.firstName).toBe(firstName);
     expect(patchedUserFromDB.lastName).toBe(lastName);
@@ -227,7 +227,7 @@ describe('Users updade requests', () => {
       .send({ form: { currentPassword, password, confirmPassword } });
     expect(res).toHaveHTTPStatus(302);
 
-    const patchedUserFromDB = await User.findById(user.id);
+    const patchedUserFromDB = await User.findByPk(user.id);
     expect(patchedUserFromDB.passwordDigest).toBe(encrypt(password));
   });
 
@@ -242,7 +242,7 @@ describe('Users updade requests', () => {
       .send({ form: { currentPassword, password, confirmPassword } });
     expect(res).toHaveHTTPStatus(401);
 
-    const patchedUserFromDB = await User.findById(user.id);
+    const patchedUserFromDB = await User.findByPk(user.id);
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
   });
 
@@ -263,7 +263,7 @@ describe('Users updade requests', () => {
       .send({ form: { currentPassword: '123wronG', password, confirmPassword } });
     expect(res).toHaveHTTPStatus(422);
 
-    const patchedUserFromDB = await User.findById(user.id);
+    const patchedUserFromDB = await User.findByPk(user.id);
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
   });
 
@@ -290,7 +290,7 @@ describe('Users updade requests', () => {
       .send({ form: { currentPassword, password: '123abc', confirmPassword: '123abc' } });
     expect(res).toHaveHTTPStatus(422);
 
-    const patchedUserFromDB = await User.findById(user.id);
+    const patchedUserFromDB = await User.findByPk(user.id);
     expect(patchedUserFromDB.passwordDigest).not.toBe(encrypt(password));
   });
 
@@ -303,7 +303,7 @@ describe('Users updade requests', () => {
       .send({ form: { firstName: '', lastName } });
     expect(res).toHaveHTTPStatus(422);
 
-    const patchedUserFromDB = await User.findById(user.id);
+    const patchedUserFromDB = await User.findByPk(user.id);
 
     expect(patchedUserFromDB.firstName).toBe(user.firstName);
     expect(patchedUserFromDB.lastName).toBe(user.lastName);
@@ -330,7 +330,7 @@ describe('Users delete requests', () => {
       .set('Cookie', cookie);
     expect(res).toHaveHTTPStatus(302);
 
-    const deletedUser = await User.findById(user.id);
+    const deletedUser = await User.findByPk(user.id);
     expect(deletedUser).toBeNull();
   });
 

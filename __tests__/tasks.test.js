@@ -183,7 +183,7 @@ describe('Authorized requests', () => {
       .set('Cookie', cookie);
     expect(res).toHaveHTTPStatus(302);
 
-    const deletedTaskFromDB = await Task.findById(taskFromDB.id);
+    const deletedTaskFromDB = await Task.findByPk(taskFromDB.id);
     expect(deletedTaskFromDB).toBeNull();
   });
 });
