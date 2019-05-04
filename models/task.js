@@ -1,3 +1,4 @@
+import Sequelize from 'sequelize';
 import formatDate from '../lib/dateFormatter';
 
 module.exports = (sequelize, DataTypes) => {
@@ -55,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
           model: models.Tag,
           where: {
             id: {
-              [sequelize.Op.in]: ids,
+              [Sequelize.Op.in]: ids,
             },
           },
         },
