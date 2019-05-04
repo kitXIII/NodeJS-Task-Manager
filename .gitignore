@@ -10,3 +10,4 @@ public/assets
 *.example*
 .env
 /coverage/
+/.idea/
