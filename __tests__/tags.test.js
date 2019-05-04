@@ -95,7 +95,7 @@ describe('Change Tags', () => {
   });
 
   it('DELETE /tasks/:id | remove tags from DB', async () => {
-    const especiallyTag = await Tag.create({name: 'EspeciallyTagNameForTestRemovingFromDB_2'});
+    const especiallyTag = await Tag.create({ name: 'EspeciallyTagNameForTestRemovingFromDB_2' });
     await task.addTag(especiallyTag);
     const res = await request.agent(server)
       .delete(`/tasks/${task.id}`)
