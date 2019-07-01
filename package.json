@@ -53,7 +53,7 @@
     "@babel/register": "^7.0.0",
     "autoprefixer": "^9.1.5",
     "babel-loader": "^8.0.4",
-    "bootstrap": "^4.2.1",
+    "bootstrap": "^4.3.1",
     "bootstrap-multiselect": "^0.9.13-1",
     "css-loader": "^2.1.0",
     "cssnano": "^4.1.10",
@@ -87,8 +87,8 @@
     "pug": "^2.0.3",
     "rollbar": "^2.5.1",
     "sass-loader": "^7.1.0",
-    "sequelize": "^5.8.4",
-    "sequelize-cli": "^5.4.0",
+    "sequelize": "^5.9.0",
+    "sequelize-cli": "^5.5.0",
     "sqlite3": "^4.0.4",
     "style-loader": "^0.23.1",
     "webpack": "^4.28.3",
@@ -110,7 +110,7 @@
     "jest": "^24.7.1",
     "jest-cli": "^24.7.1",
     "jest-supertest-matchers": "0.0.1",
-    "nodemon": "^1.18.9",
+    "nodemon": "^1.19.1",
     "supertest": "^3.3.0"
   }
 }
