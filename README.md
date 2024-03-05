@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/kitXIII/project-lvl4-s311.svg?branch=master)](https://travis-ci.org/kitXIII/project-lvl4-s311)
 
 
-# Task manager web application
+# Task manager. NodeJS Web Application
 
 
 ## Requirements
@@ -15,10 +15,4 @@
 
 ## Install
 
-
 `make setup`
-
-## Example
-
-
-[Heroku live demo](https://kit-tasks.herokuapp.com)
