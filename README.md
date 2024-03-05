@@ -13,6 +13,8 @@
 * posgresql (as production env DB engine)
 * sqlite (as test env DB engine)
 
-## Install
+## Local start
 
-`make setup`
+Run `make setup` to setup local environment
+
+Run `make start` and open browser at http://localhost:3000
